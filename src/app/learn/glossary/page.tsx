@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
-import { Search } from "lucide-react";
+import { Search, Clock } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "CCTV Glossary — Every Term Explained",
+  title: "CCTV Glossary — Technical Terms & Acronyms Decoded",
   description:
     "Every CCTV and security term explained in plain language — from IP ratings to ONVIF to WDR to PoE budget calculations.",
 };
+
+const topAcronyms = [
+  { acronym: "ONVIF", fullForm: "Open Network Video Interface Forum", summary: "Interoperability standard allowing cameras and NVRs from different brands to communicate." },
+  { acronym: "PoE", fullForm: "Power over Ethernet (802.3af/at/bt)", summary: "Transmits electrical power and digital video data over a single Cat6 network cable." },
+  { acronym: "WDR", fullForm: "Wide Dynamic Range (True WDR 120dB)", summary: "Hardware sensor feature that balances extreme bright sunlight and deep shadow in the same scene." },
+  { acronym: "IP67", fullForm: "Ingress Protection (Dust & Submersion)", summary: "Environmental rating certifying dust-tight enclosure and protection against heavy rain/immersion." },
+  { acronym: "H.265+", fullForm: "High Efficiency Video Coding Extension", summary: "Advanced video compression standard reducing bandwidth and hard drive storage usage by up to 50-70%." },
+] as const;
 
 const glossaryTerms = [
   { term: "Analog Camera", definition: "A traditional camera that sends video as an analog signal over coaxial cable (BNC connectors) to a DVR. Lower cost but limited to the resolution standard used (960H, 720p, 1080p). Still common in budget installations.", letter: "A" },
@@ -39,20 +47,76 @@ const glossaryTerms = [
 const letters = [...new Set(glossaryTerms.map((t) => t.letter))].sort();
 
 export default function GlossaryPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "DefinedTermSet",
+    name: "CCTV & Security Technical Glossary",
+    description: "Definitions for CCTV technical terms including ONVIF, PoE, WDR, IP ratings, codecs, and sensor specifications.",
+    url: "http://localhost:3000/learn/glossary",
+  };
+
   return (
     <div>
-      <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
-        Glossary
-      </p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-        CCTV & security terms explained
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <div className="flex items-center gap-2 mb-2">
+        <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
+          Technical Glossary
+        </p>
+        <span className="flex items-center gap-1 text-xs text-slate-500 font-medium">
+          <Clock className="h-3.5 w-3.5" /> 5 min A-Z scan
+        </span>
+      </div>
+
+      <h1 className="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+        CCTV Terms & Acronyms Explained
       </h1>
       <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-700">
         Every acronym and specification term used on this platform, defined in
         plain language with context for why it matters to your buying decision.
       </p>
 
-      {/* Search placeholder */}
+      {/* SEO Acronym Table */}
+      <section className="mt-8 rounded-card border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+          <h2 className="text-sm font-bold text-slate-950 uppercase tracking-wider">
+            Most Searched CCTV Acronyms & Definitions
+          </h2>
+          <span className="text-xs text-slate-500">⏱ 2 min table scan</span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-xs min-w-[550px]">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase">
+                <th className="py-2.5 px-3 w-1/5">Acronym</th>
+                <th className="py-2.5 px-3 w-1/3">Full Name</th>
+                <th className="py-2.5 px-3">Plain Language Explanation</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {topAcronyms.map((a) => (
+                <tr key={a.acronym} className="hover:bg-slate-50/70">
+                  <td className="py-3 px-3 font-bold text-primary-700 bg-slate-50/30">
+                    {a.acronym}
+                  </td>
+                  <td className="py-3 px-3 font-semibold text-slate-900">
+                    {a.fullForm}
+                  </td>
+                  <td className="py-3 px-3 text-slate-600">
+                    {a.summary}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {/* Search bar */}
       <div className="mt-8">
         <div className="relative max-w-md">
           <Search
@@ -61,7 +125,7 @@ export default function GlossaryPage() {
           />
           <input
             type="search"
-            placeholder="Search terms..."
+            placeholder="Search terms (e.g. PoE, WDR, Starlight)..."
             className="w-full rounded-control border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-950 placeholder:text-slate-500 focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/20"
           />
         </div>
@@ -76,7 +140,7 @@ export default function GlossaryPage() {
           <a
             key={letter}
             href={`#letter-${letter}`}
-            className="flex h-8 w-8 items-center justify-center rounded-control text-sm font-semibold text-slate-700 transition hover:bg-primary-50 hover:text-primary-700"
+            className="flex h-8 w-8 items-center justify-center rounded-control text-sm font-semibold text-slate-700 transition hover:bg-primary-50 hover:text-primary-700 border border-slate-200"
           >
             {letter}
           </a>
@@ -87,7 +151,7 @@ export default function GlossaryPage() {
       <div className="mt-8 space-y-10">
         {letters.map((letter) => (
           <section key={letter} id={`letter-${letter}`}>
-            <h2 className="mb-4 border-b border-slate-200 pb-2 text-lg font-semibold text-primary-700">
+            <h2 className="mb-4 border-b border-slate-200 pb-2 text-lg font-bold text-primary-700">
               {letter}
             </h2>
             <div className="space-y-4">
@@ -96,9 +160,9 @@ export default function GlossaryPage() {
                 .map(({ term, definition }) => (
                   <div
                     key={term}
-                    className="rounded-card border border-slate-200 bg-white p-5"
+                    className="rounded-card border border-slate-200 bg-white p-5 hover:border-slate-300 transition"
                   >
-                    <h3 className="text-sm font-semibold text-slate-950">
+                    <h3 className="text-sm font-bold text-slate-950">
                       {term}
                     </h3>
                     <p className="mt-2 text-sm leading-relaxed text-slate-700">

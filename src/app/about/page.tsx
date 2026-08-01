@@ -7,13 +7,32 @@ export const metadata: Metadata = {
 };
 
 export default function AboutPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "SecureView",
+    url: "http://localhost:3000/about",
+    logo: "http://localhost:3000/favicon.ico",
+    description: "Education-first CCTV decision and security technology platform in Odisha, India.",
+    address: {
+      "@type": "PostalAddress",
+      addressLocality: "Bhubaneswar",
+      addressRegion: "Odisha",
+      addressCountry: "IN",
+    },
+  };
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
         About Us
       </p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-        Built for Odisha, designed to scale
+      <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+        Built for Odisha, Designed to Scale
       </h1>
 
       <div className="mt-8 space-y-6 text-base leading-relaxed text-slate-700">

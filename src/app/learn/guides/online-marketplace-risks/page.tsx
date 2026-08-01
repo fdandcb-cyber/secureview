@@ -9,6 +9,8 @@ import {
   Headphones,
   FileSearch,
   CheckCircle2,
+  Clock,
+  HelpCircle,
 } from "lucide-react";
 
 export const metadata: Metadata = {
@@ -16,6 +18,29 @@ export const metadata: Metadata = {
   description:
     "Seller authenticity, warranty eligibility, cable and HDD quality, combo kit pitfalls, and after-sales gaps — an honest guide to buying security equipment from any online marketplace.",
 };
+
+const channelComparison = [
+  {
+    factor: "Brand Warranty Claim",
+    marketplace: "Often rejected if seller lacks authorized partner status",
+    verifiedDealer: "100% honored by brand local service centers (Bhubaneswar/Cuttack)",
+  },
+  {
+    factor: "Hard Disk Drive Grade",
+    marketplace: "Kit often bundled with desktop HDDs (WD Blue) prone to early failure",
+    verifiedDealer: "Surveillance-grade CMR drives (WD Purple / Seagate SkyHawk) specified",
+  },
+  {
+    factor: "Cabling Material",
+    marketplace: "Frequently includes cheap CCA (Copper Clad Aluminum) cables",
+    verifiedDealer: "Pure Oxygen-Free Copper (OFC) Cat6 cable specified for PoE",
+  },
+  {
+    factor: "After-Sales Support",
+    marketplace: "Box seller only; no local physical installation or troubleshooting",
+    verifiedDealer: "On-site installation, network setup, and district repair support",
+  },
+] as const;
 
 const risks = [
   {
@@ -90,8 +115,25 @@ const checklist = [
 ] as const;
 
 export default function MarketplaceRisksPage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: "Before You Buy CCTV from an Online Marketplace: 7 Verification Checks",
+    description: "Honest guide explaining seller authenticity, warranty eligibility, cable/HDD quality, and after-sales gaps for online marketplace purchases.",
+    author: {
+      "@type": "Organization",
+      name: "SecureView Technical Editorial",
+    },
+    url: "http://localhost:3000/learn/guides/online-marketplace-risks",
+  };
+
   return (
     <div>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* Breadcrumb */}
       <nav className="mb-6 flex items-center gap-2 text-sm text-slate-500">
         <Link href="/learn" className="hover:text-primary-700">
@@ -102,15 +144,21 @@ export default function MarketplaceRisksPage() {
           Guides
         </Link>
         <span>/</span>
-        <span className="text-slate-950">Marketplace Risks</span>
+        <span className="text-slate-950 font-medium">Marketplace Risks</span>
       </nav>
 
       <article>
         <header>
-          <span className="rounded-full bg-warning-500/10 px-3 py-1 text-xs font-semibold text-warning-500">
-            Buying Smart
-          </span>
-          <h1 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950 sm:text-3xl">
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-warning-500/10 border border-warning-500/30 px-3 py-1 text-xs font-semibold text-amber-700">
+              Buying Smart
+            </span>
+            <span className="flex items-center gap-1 text-xs text-slate-500 font-medium">
+              <Clock className="h-3.5 w-3.5" /> 8 min read
+            </span>
+          </div>
+
+          <h1 className="mt-4 text-2xl font-bold tracking-tight text-slate-950 sm:text-3xl">
             Before You Buy CCTV from an Online Marketplace
           </h1>
           <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-700">
@@ -120,14 +168,50 @@ export default function MarketplaceRisksPage() {
             are genuine decision risks that matter more for security equipment
             than for most product categories.
           </p>
-          <p className="mt-3 text-sm text-slate-500">8 min read</p>
         </header>
+
+        {/* SEO Comparison Table: Marketplace vs Verified Dealer */}
+        <section className="mt-8 rounded-card border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+            <h2 className="text-sm font-bold text-slate-950 uppercase tracking-wider">
+              Channel Comparison: Marketplace Listing vs. Verified Dealer Channel
+            </h2>
+            <span className="text-xs text-slate-500">⏱ 2 min table scan</span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse text-xs min-w-[550px]">
+              <thead>
+                <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase">
+                  <th className="py-2.5 px-3 w-1/4">Evaluation Factor</th>
+                  <th className="py-2.5 px-3 w-1/3">Online Marketplace Listing</th>
+                  <th className="py-2.5 px-3 w-1/3">Verified Local Channel (Odisha)</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {channelComparison.map((r) => (
+                  <tr key={r.factor} className="hover:bg-slate-50/70">
+                    <td className="py-3 px-3 font-bold text-slate-950 bg-slate-50/30">
+                      {r.factor}
+                    </td>
+                    <td className="py-3 px-3 text-slate-600">
+                      {r.marketplace}
+                    </td>
+                    <td className="py-3 px-3 font-medium text-emerald-700">
+                      {r.verifiedDealer}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
         {/* Disclaimer */}
         <div className="mt-8 rounded-card border border-slate-200 bg-white p-5">
           <div className="flex items-start gap-3">
             <AlertTriangle
-              className="mt-0.5 h-5 w-5 shrink-0 text-warning-500"
+              className="mt-0.5 h-5 w-5 shrink-0 text-amber-600"
               aria-hidden="true"
             />
             <p className="text-sm leading-relaxed text-slate-700">
@@ -158,18 +242,18 @@ export default function MarketplaceRisksPage() {
                     />
                   </div>
                   <div>
-                    <h2 className="text-base font-semibold text-slate-950">
+                    <h2 className="text-base font-bold text-slate-950">
                       {index + 1}. {title}
                     </h2>
                     <p className="mt-3 text-sm leading-relaxed text-slate-700">
                       {description}
                     </p>
-                    <div className="mt-4 flex items-start gap-2 rounded-control bg-success-600/5 px-4 py-3">
+                    <div className="mt-4 flex items-start gap-2 rounded-control bg-emerald-50 border border-emerald-200 px-4 py-3">
                       <CheckCircle2
-                        className="mt-0.5 h-4 w-4 shrink-0 text-success-600"
+                        className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600"
                         aria-hidden="true"
                       />
-                      <p className="text-sm font-medium text-slate-950">
+                      <p className="text-sm font-semibold text-slate-950">
                         What to check:{" "}
                         <span className="font-normal text-slate-700">
                           {checkItem}
@@ -185,20 +269,20 @@ export default function MarketplaceRisksPage() {
 
         {/* Summary checklist */}
         <section className="mt-12">
-          <h2 className="text-lg font-semibold text-slate-950">
-            Quick checklist before purchasing
+          <h2 className="text-lg font-bold text-slate-950">
+            10-Point Pre-Purchase Verification Checklist
           </h2>
-          <p className="mt-2 text-sm text-slate-500">
-            Run through these before placing an order from any online seller.
+          <p className="mt-1 text-sm text-slate-500">
+            Run through these items before placing an order from any online seller:
           </p>
           <div className="mt-6 rounded-card border border-slate-200 bg-white p-6">
             <ol className="space-y-3">
               {checklist.map((item, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-50 text-xs font-semibold text-primary-700">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-primary-700 text-xs font-bold text-white">
                     {i + 1}
                   </span>
-                  <span className="text-sm leading-relaxed text-slate-700">
+                  <span className="text-sm leading-relaxed text-slate-700 font-medium">
                     {item}
                   </span>
                 </li>
@@ -209,7 +293,7 @@ export default function MarketplaceRisksPage() {
 
         {/* CTA */}
         <section className="mt-12 rounded-card border border-slate-200 bg-primary-50 p-8">
-          <h2 className="text-base font-semibold text-slate-950">
+          <h2 className="text-base font-bold text-slate-950">
             Want help choosing the right system?
           </h2>
           <p className="mt-2 text-sm leading-relaxed text-slate-700">

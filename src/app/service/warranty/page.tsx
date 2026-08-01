@@ -107,16 +107,24 @@ const dosDonts = {
 export default function WarrantyPage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8">
-      <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
-        Warranty Guidance
-      </p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-        How CCTV warranty actually works
-      </h1>
-      <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-700">
-        What&apos;s covered, what voids it, why the purchase channel matters,
-        and how to verify warranty status before you buy — brand by brand.
-      </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
+            Warranty Guidance
+          </p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+            How CCTV Warranty Actually Works
+          </h1>
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-700">
+            What&apos;s covered, what voids it, why the purchase channel matters,
+            and how to verify warranty status before you buy — brand by brand.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full shrink-0 border border-slate-200 self-start sm:self-auto">
+          <span>⏱ 3 min warranty guide</span>
+        </div>
+      </div>
 
       {/* Key facts */}
       <section className="mt-10">

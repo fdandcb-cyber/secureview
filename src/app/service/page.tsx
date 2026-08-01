@@ -122,18 +122,88 @@ const serviceCenters = [
 ] as const;
 
 export default function ServicePage() {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    name: "Verified Odisha CCTV Service Directory",
+    description: "Verified installers and official CCTV service centers across Bhubaneswar, Cuttack, Puri, Rourkela, Berhampur, and Sambalpur.",
+    areaServed: "Odisha, India",
+    url: "http://localhost:3000/service",
+  };
+
+  const districtSummaryTable = [
+    { district: "Bhubaneswar", activeCenters: "2 Verified Centers", brands: "Hikvision, CP Plus, Dahua, Godrej", responseSLA: "< 4 Hours" },
+    { district: "Cuttack", activeCenters: "1 Verified Center", brands: "Hikvision, Dahua, Uniview", responseSLA: "< 6 Hours" },
+    { district: "Puri", activeCenters: "1 Verified Center", brands: "Hikvision, Dahua", responseSLA: "< 6 Hours" },
+    { district: "Rourkela", activeCenters: "1 Verified Center", brands: "Hikvision, CP Plus", responseSLA: "Same Day" },
+  ] as const;
+
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
-        Service Directory
-      </p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-        Verified service centers across Odisha
-      </h1>
-      <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-700">
-        Every listing is verified by our team — brand authorization checked,
-        services confirmed, resolution outcomes tracked. Not just star ratings.
-      </p>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
+            Service Directory — Odisha State
+          </p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+            Verified CCTV Installers & Service Centers
+          </h1>
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-700">
+            Every listing is verified by our team — brand authorization checked,
+            services confirmed, resolution outcomes tracked. Not just star ratings.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full shrink-0 border border-slate-200 self-start sm:self-auto">
+          <span>⏱ 1 min directory scan</span>
+        </div>
+      </div>
+
+      {/* SEO District Directory Matrix Table */}
+      <div className="mt-6 rounded-card border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+          <h2 className="text-xs font-bold text-slate-950 uppercase tracking-wider">
+            Odisha District Coverage & Response SLAs
+          </h2>
+          <span className="text-xs text-slate-500">Updated August 2026</span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left border-collapse text-xs min-w-[500px]">
+            <thead>
+              <tr className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase">
+                <th className="py-2 px-3 w-1/4">District</th>
+                <th className="py-2 px-3 w-1/4">Verified Centers</th>
+                <th className="py-2 px-3">Authorized Brands</th>
+                <th className="py-2 px-3 w-1/5">Avg On-Site SLA</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100">
+              {districtSummaryTable.map((d) => (
+                <tr key={d.district} className="hover:bg-slate-50/70">
+                  <td className="py-2.5 px-3 font-bold text-slate-950 bg-slate-50/30">
+                    {d.district}
+                  </td>
+                  <td className="py-2.5 px-3 font-semibold text-emerald-700">
+                    {d.activeCenters}
+                  </td>
+                  <td className="py-2.5 px-3 text-slate-700">
+                    {d.brands}
+                  </td>
+                  <td className="py-2.5 px-3 font-medium text-slate-900 bg-slate-50/30">
+                    {d.responseSLA}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Verification badge explanation */}
       <div className="mt-6 flex items-start gap-3 rounded-card border border-success-600/20 bg-success-600/5 p-4">

@@ -102,16 +102,44 @@ export default function ComparePage() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
-        Comparison Engine
-      </p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-        Compare side by side
-      </h1>
-      <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-700">
-        Real specification differences highlighted, with plain-language
-        explanations — not marketing feature lists.
-      </p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
+            Comparison Engine
+          </p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+            Compare Specs Side by Side
+          </h1>
+          <p className="mt-3 max-w-2xl text-base leading-relaxed text-slate-700">
+            Real specification differences highlighted, with plain-language
+            explanations — not marketing feature lists.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2 text-xs font-semibold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full shrink-0 border border-slate-200 self-start sm:self-auto">
+          <span>⏱ 4 min matrix scan</span>
+        </div>
+      </div>
+
+      <div className="mt-6 rounded-card border border-slate-200 bg-slate-50 p-5 text-sm text-slate-700">
+        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-950 mb-2">
+          3 Critical Spec Rows to Compare
+        </h2>
+        <ul className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <li className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-primary-700" />
+            <strong>FOV & Lens:</strong> 2.8mm (103° wide angle) vs 3.6mm (84° focused).
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-primary-700" />
+            <strong>Night Vision Type:</strong> Black & White IR (30m) vs Full-Color LED.
+          </li>
+          <li className="flex items-center gap-2">
+            <span className="h-2 w-2 rounded-full bg-primary-700" />
+            <strong>MicroSD & Mic:</strong> Standalone recording & audio capability.
+          </li>
+        </ul>
+      </div>
 
       {/* Product selector */}
       <div className="mt-8 flex flex-wrap items-center gap-3">

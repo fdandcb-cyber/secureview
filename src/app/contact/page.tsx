@@ -1,195 +1,193 @@
-import type { Metadata } from "next";
-import { Mail, Phone, MapPin, Clock } from "lucide-react";
+"use client";
 
-export const metadata: Metadata = {
-  title: "Contact Us",
-  description:
-    "Get in touch with the SecureView team for questions about CCTV systems, service center verification, or partnership inquiries.",
-};
+import { useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  Send,
+  CheckCircle2,
+  HelpCircle,
+} from "lucide-react";
 
 export default function ContactPage() {
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [inquiryType, setInquiryType] = useState("general");
+  const [message, setMessage] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!name || !phone || !message) return;
+    setSubmitted(true);
+  };
+
   return (
-    <div className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
-      <p className="text-sm font-semibold uppercase tracking-wide text-primary-700">
-        Contact
-      </p>
-      <h1 className="mt-2 text-3xl font-semibold tracking-tight text-slate-950 sm:text-4xl">
-        Get in touch
-      </h1>
-      <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-700">
-        Have a question about CCTV systems, want to get your service center
-        verified, or interested in partnering with us? We&apos;d love to hear
-        from you.
-      </p>
+    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 space-y-12">
+      {/* Header */}
+      <div className="max-w-3xl">
+        <Badge tone="primary" className="mb-2">
+          Contact & Support Portal
+        </Badge>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
+          Get in Touch with SecureView Odisha
+        </h1>
+        <p className="mt-3 text-base text-slate-700 leading-relaxed">
+          Have a question about security camera specifications, local Odisha installer verification, or an existing quote? Send us an inquiry.
+        </p>
+      </div>
 
-      <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-5">
-        {/* Contact form */}
-        <div className="lg:col-span-3">
-          <form className="space-y-6">
-            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-              <div>
-                <label
-                  htmlFor="contact-name"
-                  className="block text-sm font-medium text-slate-950"
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Form */}
+        <div className="lg:col-span-2">
+          <Card className="p-6 sm:p-8 space-y-6">
+            {submitted ? (
+              <div className="p-6 rounded-lg bg-emerald-50 border border-emerald-200 text-center space-y-3">
+                <CheckCircle2 className="h-10 w-10 text-emerald-600 mx-auto" />
+                <h3 className="text-lg font-bold text-slate-950">
+                  Inquiry Submitted Successfully!
+                </h3>
+                <p className="text-xs text-slate-700">
+                  Thank you {name}. Our Odisha support team will reach out to you at {phone} shortly.
+                </p>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={() => setSubmitted(false)}
                 >
-                  Name
-                </label>
-                <input
-                  type="text"
-                  id="contact-name"
-                  name="name"
-                  autoComplete="name"
-                  className="mt-2 w-full rounded-control border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-950 placeholder:text-slate-500 focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/20"
-                  placeholder="Your full name"
-                />
+                  Send Another Message
+                </Button>
               </div>
-              <div>
-                <label
-                  htmlFor="contact-email"
-                  className="block text-sm font-medium text-slate-950"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  id="contact-email"
-                  name="email"
-                  autoComplete="email"
-                  className="mt-2 w-full rounded-control border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-950 placeholder:text-slate-500 focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/20"
-                  placeholder="you@example.com"
-                />
-              </div>
-            </div>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-4 text-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-medium text-slate-900 mb-1">
+                      Full Name <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      type="text"
+                      required
+                      placeholder="e.g. Ramesh Chandra"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                  </div>
 
-            <div>
-              <label
-                htmlFor="contact-subject"
-                className="block text-sm font-medium text-slate-950"
-              >
-                Subject
-              </label>
-              <select
-                id="contact-subject"
-                name="subject"
-                className="mt-2 w-full rounded-control border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-950 focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/20"
-              >
-                <option value="">Select a topic</option>
-                <option value="general">General inquiry</option>
-                <option value="product">Product question</option>
-                <option value="service-verification">
-                  Service center verification
-                </option>
-                <option value="partnership">Partnership / dealership</option>
-                <option value="technical">Technical support</option>
-                <option value="feedback">Feedback or suggestion</option>
-              </select>
-            </div>
+                  <div>
+                    <label className="block font-medium text-slate-900 mb-1">
+                      Phone Number <span className="text-red-500">*</span>
+                    </label>
+                    <Input
+                      type="tel"
+                      required
+                      placeholder="+91 94370 00000"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                    />
+                  </div>
+                </div>
 
-            <div>
-              <label
-                htmlFor="contact-message"
-                className="block text-sm font-medium text-slate-950"
-              >
-                Message
-              </label>
-              <textarea
-                id="contact-message"
-                name="message"
-                rows={5}
-                className="mt-2 w-full rounded-control border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-950 placeholder:text-slate-500 focus:border-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/20"
-                placeholder="Tell us how we can help..."
-              />
-            </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block font-medium text-slate-900 mb-1">
+                      Email Address (Optional)
+                    </label>
+                    <Input
+                      type="email"
+                      placeholder="you@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
 
-            <button
-              type="submit"
-              className="inline-flex items-center justify-center rounded-control bg-primary-700 px-6 py-2.5 text-sm font-semibold text-white transition hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-600/20"
-            >
-              Send message
-            </button>
-          </form>
+                  <div>
+                    <label className="block font-medium text-slate-900 mb-1">
+                      Inquiry Category
+                    </label>
+                    <select
+                      value={inquiryType}
+                      onChange={(e) => setInquiryType(e.target.value)}
+                      className="w-full h-10 px-3 border border-slate-200 rounded-control bg-white text-sm text-slate-900 focus:outline-none focus:border-primary-600"
+                    >
+                      <option value="general">General Technology Question</option>
+                      <option value="quote-follow-up">Quote & Sizing Assistance</option>
+                      <option value="service-issue">Odisha Service Center Verification</option>
+                      <option value="partnership">Installer Partnership</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block font-medium text-slate-900 mb-1">
+                    Your Message / Requirements <span className="text-red-500">*</span>
+                  </label>
+                  <textarea
+                    required
+                    rows={4}
+                    placeholder="Describe your property, camera requirements, or inquiry..."
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    className="w-full p-3 border border-slate-200 rounded-control text-sm text-slate-900 focus:outline-none focus:border-primary-600"
+                  />
+                </div>
+
+                <Button type="submit" variant="primary" className="w-full sm:w-auto">
+                  <Send className="h-4 w-4 mr-2" /> Submit Inquiry
+                </Button>
+              </form>
+            )}
+          </Card>
         </div>
 
-        {/* Contact details */}
-        <div className="space-y-6 lg:col-span-2">
-          <div className="rounded-card border border-slate-200 bg-white p-6">
-            <h2 className="text-base font-semibold text-slate-950">
-              Contact information
+        {/* Contact Info Sidebar */}
+        <div className="space-y-6">
+          <Card className="p-6 space-y-4">
+            <h2 className="text-base font-bold text-slate-950 border-b border-slate-100 pb-3">
+              Direct Contact Details
             </h2>
-            <ul className="mt-5 space-y-4">
-              <li className="flex items-start gap-3">
-                <Mail
-                  className="mt-0.5 h-5 w-5 shrink-0 text-primary-700"
-                  aria-hidden="true"
-                />
-                <div>
-                  <p className="text-sm font-medium text-slate-950">Email</p>
-                  <a
-                    href="mailto:hello@secureview.in"
-                    className="text-sm text-primary-700 hover:underline"
-                  >
-                    hello@secureview.in
-                  </a>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <Phone
-                  className="mt-0.5 h-5 w-5 shrink-0 text-primary-700"
-                  aria-hidden="true"
-                />
-                <div>
-                  <p className="text-sm font-medium text-slate-950">Phone</p>
-                  <a
-                    href="tel:+917008000000"
-                    className="text-sm text-primary-700 hover:underline"
-                  >
-                    +91 70080 00000
-                  </a>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <MapPin
-                  className="mt-0.5 h-5 w-5 shrink-0 text-primary-700"
-                  aria-hidden="true"
-                />
-                <div>
-                  <p className="text-sm font-medium text-slate-950">Office</p>
-                  <p className="text-sm text-slate-500">
-                    Bhubaneswar, Odisha
-                    <br />
-                    India — 751001
-                  </p>
-                </div>
-              </li>
-              <li className="flex items-start gap-3">
-                <Clock
-                  className="mt-0.5 h-5 w-5 shrink-0 text-primary-700"
-                  aria-hidden="true"
-                />
-                <div>
-                  <p className="text-sm font-medium text-slate-950">
-                    Business hours
-                  </p>
-                  <p className="text-sm text-slate-500">
-                    Mon – Sat: 9:00 AM – 7:00 PM IST
-                    <br />
-                    Sunday: Closed
-                  </p>
-                </div>
-              </li>
-            </ul>
-          </div>
 
-          <div className="rounded-card border border-slate-200 bg-primary-50 p-6">
-            <h2 className="text-base font-semibold text-slate-950">
-              Want to get your service center listed?
-            </h2>
-            <p className="mt-2 text-sm leading-relaxed text-slate-700">
-              We manually verify every service center before listing. If you
-              operate a CCTV installation or service business in Odisha,
-              reach out — we&apos;ll walk you through our verification process.
-            </p>
-          </div>
+            <div className="space-y-3 text-xs text-slate-700">
+              <div className="flex items-start gap-3">
+                <Phone className="h-4 w-4 text-primary-700 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-slate-950 block">Phone & WhatsApp:</strong>
+                  +91 94370 12345
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Mail className="h-4 w-4 text-primary-700 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-slate-950 block">Email Support:</strong>
+                  connectzsalesandservices@gmail.com
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <MapPin className="h-4 w-4 text-primary-700 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-slate-950 block">Headquarters:</strong>
+                  Saheed Nagar, Bhubaneswar, Odisha - 751007
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <Clock className="h-4 w-4 text-primary-700 shrink-0 mt-0.5" />
+                <div>
+                  <strong className="text-slate-950 block">Business Hours:</strong>
+                  Mon - Sat: 9:00 AM - 7:00 PM IST
+                </div>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </div>

@@ -5,6 +5,8 @@ import {
   MapPin,
   FileText,
   ClipboardList,
+  MessageSquare,
+  Sliders,
   ShieldAlert,
   ArrowLeft,
   Settings,
@@ -18,6 +20,8 @@ const adminNav = [
   { label: "Service Centers (Odisha)", href: "/admin/service-centers", icon: MapPin },
   { label: "Knowledge CMS", href: "/admin/cms", icon: FileText },
   { label: "Quotes & Orders", href: "/admin/quotes", icon: ClipboardList },
+  { label: "Contact Inquiries", href: "/admin/inquiries", icon: MessageSquare },
+  { label: "Site-Wide Content Control", href: "/admin/site-content", icon: Sliders },
 ] as const;
 
 export default function AdminLayout({

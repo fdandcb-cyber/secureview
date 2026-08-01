@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — sourced from Master Blueprint §9 (Design System).
+ * Single source of truth for color/spacing. Do not hardcode hex values
+ * in components; reference these tokens via Tailwind utility classes
+ * (e.g. bg-primary-700, text-slate-700, border-slate-200).
+ */
+:root {
+  /* Brand / primary */
+  --color-primary-700: #1D4ED8; /* primary actions / active navigation */
+  --color-primary-600: #2563EB; /* links, standard primary controls */
+  --color-primary-50:  #EFF6FF; /* subtle information background */
+
+  /* Status */
+  --color-success-600: #16A34A; /* verified / success states */
+  --color-warning-500: #F59E0B; /* caution / compatibility warnings */
+  --color-danger-600:  #DC2626; /* errors / destructive actions */
+
+  /* Neutrals */
+  --color-slate-950: #020617; /* highest-emphasis text */
+  --color-slate-700: #334155; /* secondary strong text */
+  --color-slate-500: #64748B; /* muted text */
+  --color-slate-200: #E2E8F0; /* borders */
+  --color-slate-50:  #F8FAFC; /* page background */
+  --color-white:     #FFFFFF; /* primary surfaces */
+
+  /* Spacing scale (4/8px system) — reference via Tailwind's default spacing
+     scale which already maps to these values (1=4px, 2=8px, 3=12px, 4=16px,
+     6=24px, 8=32px, 10=40px, 12=48px, 16=64px, 20=80px). Documented here so
+     the scale is never invented ad hoc per component. */
+
+  /* Radius */
+  --radius-control: 10px; /* 8-12px per blueprint */
+  --radius-card: 14px;    /* 12-16px per blueprint */
+
+  --background: var(--color-white);
+  --foreground: var(--color-slate-950);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+
+  --color-primary-700: var(--color-primary-700);
+  --color-primary-600: var(--color-primary-600);
+  --color-primary-50: var(--color-primary-50);
+  --color-success-600: var(--color-success-600);
+  --color-warning-500: var(--color-warning-500);
+  --color-danger-600: var(--color-danger-600);
+  --color-slate-950: var(--color-slate-950);
+  --color-slate-700: var(--color-slate-700);
+  --color-slate-500: var(--color-slate-500);
+  --color-slate-200: var(--color-slate-200);
+  --color-slate-50: var(--color-slate-50);
+
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains-mono);
+
+  --radius-control: var(--radius-control);
+  --radius-card: var(--radius-card);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/* Respect reduced-motion preference, per blueprint §21 Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Visible focus states — never rely on browser default alone, never remove it */
+:focus-visible {
+  outline: 2px solid var(--color-primary-600);
+  outline-offset: 2px;
+}

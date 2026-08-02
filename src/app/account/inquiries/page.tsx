@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { MessageSquare, CheckCircle2 } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Your Contact Inquiries — Account",

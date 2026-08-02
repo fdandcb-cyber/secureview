@@ -5,7 +5,7 @@ import { DataTable } from "@/components/data-display/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Plus, ShieldCheck, Search } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 
 type BrandRow = {
   id: string;
@@ -24,7 +24,7 @@ const initialBrands: BrandRow[] = [
 ];
 
 export default function AdminBrandsPage() {
-  const [brands, setBrands] = useState<BrandRow[]>(initialBrands);
+  const [brands] = useState<BrandRow[]>(initialBrands);
   const [searchTerm, setSearchTerm] = useState("");
 
   const filtered = brands.filter((b) =>

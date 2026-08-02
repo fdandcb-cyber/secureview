@@ -1,6 +1,5 @@
 "use client";
 
-import type { Metadata } from "next";
 import Link from "next/link";
 import { Filter, ChevronDown, Star } from "lucide-react";
 import { useState } from "react";

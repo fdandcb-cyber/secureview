@@ -5,13 +5,8 @@ import {
   FileText,
   Plus,
   Search,
-  CheckCircle2,
-  AlertTriangle,
   Bot,
-  Eye,
-  Edit,
   Trash2,
-  Clock,
   Sparkles,
 } from "lucide-react";
 

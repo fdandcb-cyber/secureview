@@ -1,6 +1,18 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { QuoteSchema, type Quote, type QuoteItem } from "../schemas";
-import { getPublishedProductBySlug } from "@/features/products/repositories/product-repository";
+
+interface DBQuoteItemRow {
+  id: string;
+  quote_id: string;
+  product_id: string;
+  quantity?: number;
+  unit_price_inr?: number;
+  products?: {
+    name?: string;
+    model_number?: string;
+    base_price_inr?: number;
+  };
+}
 
 const memoryQuotes: Record<string, Quote> = {
   "default-quote": {
@@ -65,7 +77,7 @@ export async function getQuote(quoteId: string = "default-quote"): Promise<Quote
       .single();
 
     if (!error && quoteData) {
-      const items: QuoteItem[] = (quoteData.quote_items || []).map((item: any) => {
+      const items: QuoteItem[] = (quoteData.quote_items || []).map((item: DBQuoteItemRow) => {
         const unitPrice = Number(item.unit_price_inr || item.products?.base_price_inr || 0);
         const quantity = Number(item.quantity || 1);
         return {
@@ -98,7 +110,7 @@ export async function getQuote(quoteId: string = "default-quote"): Promise<Quote
         totalInr,
       });
     }
-  } catch (err) {
+  } catch {
     // Fallback to memory quote
   }
 

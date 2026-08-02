@@ -5,7 +5,7 @@ import { getPublishedProductBySlug } from "@/features/products/repositories/prod
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, Info, CheckCircle2, ArrowLeft } from "lucide-react";
+import { ShieldCheck, Info } from "lucide-react";
 
 type ProductDetailPageProps = {
   params: Promise<{ slug: string }>;

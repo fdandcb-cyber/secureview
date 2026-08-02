@@ -30,7 +30,7 @@ export async function createShiprocketShipment(input: ShipmentCreationInput): Pr
     // Thin client call to Shiprocket API
     return {
       success: true,
-      shipmentId: `SR-${Date.now()}`,
+      shipmentId: `SR-${input.orderId}-${Date.now()}`,
       awbCode: `AWB${Math.floor(10000000 + Math.random() * 90000000)}`,
     };
   } catch (err) {

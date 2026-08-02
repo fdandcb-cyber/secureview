@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Clock, ChevronRight, CheckCircle2, ShieldCheck } from "lucide-react";
+import { Clock } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Buying Guides — Practical CCTV Decision Support",

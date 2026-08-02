@@ -4,8 +4,7 @@ import { useState } from "react";
 import { DataTable } from "@/components/data-display/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { MessageSquare, Search, Filter, CheckCircle2 } from "lucide-react";
+import { MessageSquare, Filter, CheckCircle2 } from "lucide-react";
 
 type InquiryRow = {
   id: string;

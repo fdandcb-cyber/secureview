@@ -44,7 +44,7 @@ export async function getArticleBySlug(slug: string): Promise<KnowledgeArticle |
     if (!error && data) {
       return data as KnowledgeArticle;
     }
-  } catch (err) {
+  } catch {
     // Graceful fallback
   }
 

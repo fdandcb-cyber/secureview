@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import {
-  BookOpen,
   FileText,
   Languages,
   Wrench,
@@ -9,8 +8,6 @@ import {
   ChevronRight,
   Clock,
   CheckCircle2,
-  HelpCircle,
-  ArrowRight,
 } from "lucide-react";
 
 export const metadata: Metadata = {

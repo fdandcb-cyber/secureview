@@ -2,10 +2,8 @@
 
 import { useState, use } from "react";
 import Link from "next/link";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Upload, Star, Trash2, ArrowLeft, Image as ImageIcon } from "lucide-react";
+import { Upload, Star, Trash2, ArrowLeft } from "lucide-react";
 
 type ImageItem = {
   id: string;
@@ -128,6 +126,7 @@ export default function ProductImagesPage({
         {images.map((img) => (
           <Card key={img.id} className="p-4 space-y-3 relative overflow-hidden group">
             <div className="aspect-video bg-slate-100 rounded-lg overflow-hidden relative">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={img.url}
                 alt={img.altText}

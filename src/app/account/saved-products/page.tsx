@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Bookmark, Star, ArrowRight } from "lucide-react";
+import { Bookmark } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Saved Products (Wishlist) — Account",

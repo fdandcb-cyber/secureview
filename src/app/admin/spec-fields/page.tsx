@@ -25,7 +25,7 @@ const initialSpecFields: SpecFieldRow[] = [
 ];
 
 export default function AdminSpecFieldsPage() {
-  const [fields, setFields] = useState<SpecFieldRow[]>(initialSpecFields);
+  const [fields] = useState<SpecFieldRow[]>(initialSpecFields);
 
   return (
     <div className="space-y-6">

@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { getOrderById } from "@/features/commerce/repositories/order-repository";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Package, Truck, CheckCircle2, ShieldCheck, ArrowLeft } from "lucide-react";
 
 type OrderDetailPageProps = {
   params: Promise<{ id: string }>;

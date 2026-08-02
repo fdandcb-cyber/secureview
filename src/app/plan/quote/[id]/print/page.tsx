@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getQuote } from "@/features/quotes/repositories/quote-repository";
-import { Printer, ShieldCheck } from "lucide-react";
+import { ShieldCheck } from "lucide-react";
 
 type PrintQuotePageProps = {
   params: Promise<{ id: string }>;

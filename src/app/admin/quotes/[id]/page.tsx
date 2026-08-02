@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, CheckCircle2, ShoppingBag, Save, Printer } from "lucide-react";
+import { ArrowLeft, ShoppingBag, Save, Printer } from "lucide-react";
 
 type LineItem = {
   id: string;

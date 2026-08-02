@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { getArticleBySlug } from "@/features/knowledge/repositories/knowledge-repository";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Clock, ArrowLeft } from "lucide-react";
+import { Clock } from "lucide-react";
 
 type GuidePageProps = {
   params: Promise<{ slug: string }>;

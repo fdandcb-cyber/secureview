@@ -63,7 +63,7 @@ export async function POST(request: Request) {
       await supabaseAdmin
         .from("processed_webhook_events")
         .insert({ provider: "razorpay", event_id: eventId });
-    } catch (dbErr) {
+    } catch {
       // In-memory fallback if DB table unpopulated
     }
 
@@ -84,7 +84,7 @@ export async function POST(request: Request) {
             })
             .eq("razorpay_order_id", razorpayOrderId);
         }
-      } catch (orderErr) {
+      } catch {
         // Fallback handled
       }
     }

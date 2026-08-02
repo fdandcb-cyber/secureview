@@ -10,7 +10,6 @@ import {
   FileSearch,
   CheckCircle2,
   Clock,
-  HelpCircle,
 } from "lucide-react";
 
 export const metadata: Metadata = {

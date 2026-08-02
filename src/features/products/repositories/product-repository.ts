@@ -177,7 +177,7 @@ export async function getPublishedProductBySlug(
       });
       return mapped;
     }
-  } catch (err) {
+  } catch {
     // Graceful fallback to verified static data if DB table is unpopulated
   }
 
@@ -224,7 +224,7 @@ export async function listPublishedProductsByCategory(
         })
       );
     }
-  } catch (err) {
+  } catch {
     // Graceful fallback
   }
 

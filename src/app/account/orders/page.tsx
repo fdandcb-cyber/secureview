@@ -3,7 +3,7 @@ import Link from "next/link";
 import { listOrdersForUser } from "@/features/commerce/repositories/order-repository";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Package, Truck, CheckCircle2, ArrowRight } from "lucide-react";
+import { Truck, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Your Orders — SecureView Account",

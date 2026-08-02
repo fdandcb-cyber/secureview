@@ -58,7 +58,7 @@ export async function getOrderById(orderId: string): Promise<Order | null> {
     if (!error && data) {
       return OrderSchema.parse(data);
     }
-  } catch (err) {
+  } catch {
     // Fallback
   }
 
@@ -77,7 +77,7 @@ export async function listOrdersForUser(): Promise<Order[]> {
     if (!error && data && data.length > 0) {
       return data.map((d) => OrderSchema.parse(d));
     }
-  } catch (err) {
+  } catch {
     // Fallback
   }
 

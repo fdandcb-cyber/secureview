@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { GitCompare, Plus, X, ArrowRight, Check, Minus } from "lucide-react";
+import { GitCompare, X, ArrowRight, Check, Minus } from "lucide-react";
 
 const availableProducts = [
   { id: "1", name: "Hikvision DS-2CD1043G2-I", brand: "Hikvision", category: "IP Camera" },

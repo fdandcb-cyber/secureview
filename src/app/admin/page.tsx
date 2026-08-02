@@ -9,7 +9,6 @@ import {
   BadgeCheck,
   CheckCircle2,
   TrendingUp,
-  AlertCircle,
   Database,
   ArrowRight,
 } from "lucide-react";

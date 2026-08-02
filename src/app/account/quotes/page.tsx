@@ -4,7 +4,7 @@ import { getQuote } from "@/features/quotes/repositories/quote-repository";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ClipboardList, ArrowRight, Printer } from "lucide-react";
+import { Printer } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Saved Quotes — Account",

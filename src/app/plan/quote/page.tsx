@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import {
   ClipboardList,
   Plus,
@@ -59,13 +58,15 @@ export default function QuotePage() {
   };
 
   const addItem = (product: { name: string; unitPrice: number }) => {
-    const newItem: QuoteItem = {
-      id: Date.now().toString(),
-      name: product.name,
-      quantity: 1,
-      unitPrice: product.unitPrice,
-    };
-    setItems((prev) => [...prev, newItem]);
+    setItems((prev) => [
+      ...prev,
+      {
+        id: `item-${prev.length + 1}-${Math.random().toString(36).substring(2, 7)}`,
+        name: product.name,
+        quantity: 1,
+        unitPrice: product.unitPrice,
+      },
+    ]);
     setShowAddMenu(false);
   };
 

@@ -63,7 +63,7 @@ export async function listVerifiedServiceCenters(
     if (!error && data && data.length > 0) {
       return data as ServiceCenter[];
     }
-  } catch (err) {
+  } catch {
     // Graceful fallback
   }
 

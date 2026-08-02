@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ChevronDown, AlertCircle, Clock, Wrench, CheckCircle2 } from "lucide-react";
+import { ChevronDown, AlertCircle, Clock } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "CCTV Troubleshooting Guide — Step-by-Step Diagnostic Solutions",

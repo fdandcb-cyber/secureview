@@ -69,8 +69,8 @@ export default function CalculatorsPage() {
   const [upsCameraWatts, setUpsCameraWatts] = useState(7);
   const [switchWatts, setSwitchWatts] = useState(0);
   const [desiredRuntime, setDesiredRuntime] = useState(30); // minutes
-  const [batteryVoltage, setBatteryVoltage] = useState(12);
-  const [inverterEfficiency, setInverterEfficiency] = useState(80);
+  const [batteryVoltage] = useState(12);
+  const [inverterEfficiency] = useState(80);
 
   // Storage calculation
   const bitratePerCamera =

@@ -6,7 +6,7 @@ import { DataTable } from "@/components/data-display/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ClipboardList, Search, Lock, Filter, Eye, ArrowRight } from "lucide-react";
+import { ClipboardList, Search, Filter, Eye } from "lucide-react";
 
 type QuoteStatus = "draft" | "sent" | "accepted" | "expired";
 
@@ -63,7 +63,7 @@ const initialQuotes: QuoteRecord[] = [
 ];
 
 export default function AdminQuotesPage() {
-  const [quotes, setQuotes] = useState<QuoteRecord[]>(initialQuotes);
+  const [quotes] = useState<QuoteRecord[]>(initialQuotes);
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
 

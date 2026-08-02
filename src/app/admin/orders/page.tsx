@@ -5,7 +5,7 @@ import { DataTable } from "@/components/data-display/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, RefreshCw, Truck, CheckCircle2 } from "lucide-react";
+import { Search, RefreshCw, Truck } from "lucide-react";
 
 type OrderRow = {
   id: string;

@@ -3,13 +3,11 @@ import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import {
-  User,
   ShoppingBag,
   ClipboardList,
   Bookmark,
   GitCompare,
   MessageSquare,
-  MapPin,
   ArrowRight,
 } from "lucide-react";
 

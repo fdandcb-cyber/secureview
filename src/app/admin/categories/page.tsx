@@ -4,8 +4,7 @@ import { useState } from "react";
 import { DataTable } from "@/components/data-display/data-table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 
 type CategoryRow = {
   id: string;
@@ -23,8 +22,8 @@ const initialCategories: CategoryRow[] = [
 ];
 
 export default function AdminCategoriesPage() {
-  const [categories, setCategories] = useState<CategoryRow[]>(initialCategories);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [categories] = useState<CategoryRow[]>(initialCategories);
+  const [searchTerm] = useState("");
 
   const filtered = categories.filter((c) =>
     c.name.toLowerCase().includes(searchTerm.toLowerCase())

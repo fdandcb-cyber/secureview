@@ -6,13 +6,9 @@ import {
   Plus,
   Search,
   Filter,
-  Edit2,
   Trash2,
-  Check,
   X,
   Star,
-  ShieldCheck,
-  ChevronDown,
 } from "lucide-react";
 
 type ProductItem = {

@@ -7,9 +7,6 @@ import {
   Plus,
   Search,
   ShieldCheck,
-  CheckCircle2,
-  XCircle,
-  Phone,
   Star,
   X,
 } from "lucide-react";
@@ -200,6 +197,17 @@ export default function AdminServiceCentersPage() {
           <span className="text-xs text-slate-400">
             {filteredCenters.length} centers found
           </span>
+        </div>
+
+        <div className="relative">
+          <Search className="absolute left-3 top-2.5 h-4 w-4 text-slate-400" />
+          <input
+            type="text"
+            placeholder="Search service centers..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full rounded-lg border border-slate-200 pl-9 pr-4 py-1.5 text-xs text-slate-950 placeholder:text-slate-400 focus:border-primary-600 focus:outline-none"
+          />
         </div>
 
         <div className="flex flex-wrap gap-2">

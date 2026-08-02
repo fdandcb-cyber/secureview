@@ -16,8 +16,8 @@ export type AdminSessionInfo = {
  * Redirects to `/login` if unauthenticated or unauthorized.
  */
 export async function requireAdmin(): Promise<AdminSessionInfo> {
-  // WARNING: DEV_BYPASS_ADMIN_AUTH must NEVER be set to "true" in production or staging environments!
-  if (process.env.DEV_BYPASS_ADMIN_AUTH === "true") {
+  // WARNING: DEV_BYPASS_ADMIN_AUTH is strictly disabled in production builds!
+  if (process.env.NODE_ENV !== "production" && process.env.DEV_BYPASS_ADMIN_AUTH === "true") {
     console.warn(
       "WARNING: DEV_BYPASS_ADMIN_AUTH is enabled. Bypassing Supabase admin authentication guard for local offline development. This must NEVER be set in any deployed environment!"
     );

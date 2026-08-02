@@ -11,7 +11,7 @@ Module.prototype.require = function (id: string, ...args: unknown[]) {
 };
 
 /**
- * Admin Auth Guard Verification Test (§1)
+ * Admin Auth Guard Verification Test (§1 & §2)
  */
 async function runAuthGuardTests() {
   console.log("Starting Admin Auth Guard Verification Tests...");
@@ -35,7 +35,7 @@ async function runAuthGuardTests() {
     }
   }
 
-  // Test 2: Explicit DEV_BYPASS_ADMIN_AUTH="true" triggers bypass with console warning
+  // Test 2: Explicit DEV_BYPASS_ADMIN_AUTH="true" in NODE_ENV=development triggers bypass with console warning
   {
     process.env.DEV_BYPASS_ADMIN_AUTH = "true";
     const session = await requireAdmin();
@@ -45,6 +45,20 @@ async function runAuthGuardTests() {
     } else {
       console.error("❌ Test 2 Failed: Explicit bypass did not return expected dev session:", session);
       process.exit(1);
+    }
+  }
+
+  // Test 3: In NODE_ENV=production, DEV_BYPASS_ADMIN_AUTH="true" MUST BE REJECTED (no bypass allowed in production)
+  {
+    (process.env as Record<string, string>).NODE_ENV = "production";
+    process.env.DEV_BYPASS_ADMIN_AUTH = "true";
+
+    try {
+      await requireAdmin();
+      console.error("❌ Test 3 Failed: requireAdmin allowed bypass in NODE_ENV=production!");
+      process.exit(1);
+    } catch {
+      console.log("✔ Test 3 Passed: requireAdmin() strictly rejected DEV_BYPASS_ADMIN_AUTH when NODE_ENV=production.");
     }
   }
 

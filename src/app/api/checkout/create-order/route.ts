@@ -6,6 +6,8 @@ import { ShippingAddressSchema } from "@/features/commerce/schemas";
 import { createOrderServerSide } from "@/features/commerce/repositories/order-repository";
 import { getPublishedProductById } from "@/features/products/repositories/product-repository";
 
+import { checkRateLimit } from "@/lib/rate-limit";
+
 const CreateOrderInputSchema = z.object({
   quoteId: z.string().optional(),
   items: z.array(
@@ -23,6 +25,17 @@ const CreateOrderInputSchema = z.object({
  * and creates a Razorpay payment order.
  */
 export async function POST(request: Request) {
+  // Rate limiting check (§8)
+  const clientIp = request.headers.get("x-forwarded-for") ?? "anonymous-client";
+  const limit = checkRateLimit(`checkout-${clientIp}`, { windowMs: 60_000, maxRequests: 5 });
+
+  if (!limit.allowed) {
+    return NextResponse.json(
+      { success: false, error: "Too many checkout requests. Please wait a minute before trying again." },
+      { status: 429 }
+    );
+  }
+
   try {
     const body = await request.json();
     const parsed = CreateOrderInputSchema.parse(body);

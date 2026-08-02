@@ -2,22 +2,19 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { NextResponse } from "next/server";
 
 /**
- * Health-check endpoint to verify Supabase connectivity.
- * GET /api/health → { status, supabase, timestamp }
+ * Production Health-check Endpoint (§14)
+ * Returns minimal status without leaking internal database error messages or stack traces.
  */
 export async function GET() {
   try {
     const supabase = await createSupabaseServerClient();
-
-    // Simple connectivity test — query the auth service
-    const { data, error } = await supabase.auth.getSession();
+    const { error } = await supabase.auth.getSession();
 
     if (error) {
+      console.error("[Health Check Error] Supabase session error:", error);
       return NextResponse.json(
         {
-          status: "error",
-          supabase: "connection_failed",
-          error: error.message,
+          status: "degraded",
           timestamp: new Date().toISOString(),
         },
         { status: 500 }
@@ -26,16 +23,13 @@ export async function GET() {
 
     return NextResponse.json({
       status: "ok",
-      supabase: "connected",
-      session: data.session ? "active" : "none",
       timestamp: new Date().toISOString(),
     });
   } catch (err) {
+    console.error("[Health Check Error] Connectivity failure:", err);
     return NextResponse.json(
       {
         status: "error",
-        supabase: "unreachable",
-        error: err instanceof Error ? err.message : "Unknown error",
         timestamp: new Date().toISOString(),
       },
       { status: 500 }

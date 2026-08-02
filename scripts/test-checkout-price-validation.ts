@@ -22,12 +22,9 @@ async function runCheckoutPriceValidationTests() {
 
   // Mock Razorpay SDK addResources method before dynamic import of route
   const RazorpayModule = await import("razorpay");
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (RazorpayModule.default.prototype as any).addResources = function () {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.orders = {
+  (RazorpayModule.default.prototype as unknown as Record<string, unknown>).addResources = function () {
+    (this as Record<string, unknown>).orders = {
       create: async (params: { amount: number; currency: string }) =>
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         ({
           id: `order_mock_${Math.random().toString(36).substring(2, 9)}`,
           entity: "order",

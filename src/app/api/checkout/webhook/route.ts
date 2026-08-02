@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "crypto";
+import { z } from "zod";
 import { getServerEnv } from "@/config/env";
 import { createSupabasePrivilegedClient } from "@/lib/supabase/server-privileged";
 
@@ -18,8 +19,29 @@ function safeCompareSignatures(expected: string, actual: string): boolean {
 }
 
 /**
+ * Minimal strict shape for the Razorpay webhook payloads this handler
+ * actually acts on. Unknown event types still need `event` + a payment
+ * entity id to be claimable for idempotency; payment.captured additionally
+ * needs order_id to know which local order to update.
+ */
+const RazorpayWebhookPayloadSchema = z.object({
+  event: z.string(),
+  event_id: z.string().optional(),
+  payload: z.object({
+    payment: z.object({
+      entity: z.object({
+        id: z.string(),
+        order_id: z.string().optional(),
+      }),
+    }),
+  }),
+});
+
+/**
  * POST /api/checkout/webhook
- * Razorpay webhook handler with strict signature verification and idempotency guard.
+ * Razorpay webhook handler with strict signature verification, strict
+ * payload validation, and idempotency that only commits AFTER the critical
+ * order-state update succeeds — never before it, and never silently.
  */
 export async function POST(request: Request) {
   try {
@@ -59,73 +81,115 @@ export async function POST(request: Request) {
       );
     }
 
-    const payload = JSON.parse(rawBody);
-
-    // Rule 3: Fail if no usable event ID / payment ID exists in the payload (never invent random IDs)
-    const eventId: string | undefined =
-      payload.event_id || payload.payload?.payment?.entity?.id;
-
-    if (!eventId) {
+    // Rule 3: Strict payload validation — reject anything that doesn't match
+    // the expected shape instead of doing raw, uncontrolled property access.
+    const parseResult = RazorpayWebhookPayloadSchema.safeParse(JSON.parse(rawBody));
+    if (!parseResult.success) {
+      console.error("[checkout/webhook] Payload failed validation:", parseResult.error.message);
       return NextResponse.json(
-        { success: false, error: "Missing usable event_id in webhook payload." },
+        { success: false, error: "Webhook payload did not match expected shape." },
         { status: 400 }
       );
     }
+    const payload = parseResult.data;
 
-    const eventType = payload.event || "payment.captured";
+    const eventId = payload.event_id || payload.payload.payment.entity.id;
+    const eventType = payload.event;
 
-    // Idempotency Check via Supabase or fallback
+    const supabaseAdmin = createSupabasePrivilegedClient();
+
+    // Idempotency pre-check: has this event already been fully processed?
+    // A DB failure HERE fails closed (500) so Razorpay retries — we must
+    // not guess whether this is a duplicate when we can't actually check.
+    let alreadyProcessed = false;
     try {
-      const supabaseAdmin = createSupabasePrivilegedClient();
-      const { data: existing } = await supabaseAdmin
+      const { data: existing, error } = await supabaseAdmin
         .from("processed_webhook_events")
         .select("id")
         .eq("event_id", eventId)
-        .single();
+        .maybeSingle();
 
-      if (existing) {
-        // Event already processed — return 200 without duplicate updates
-        return NextResponse.json({
-          success: true,
-          status: "already_processed",
-          eventId,
-        });
-      }
-
-      // Record event as processed
-      await supabaseAdmin
-        .from("processed_webhook_events")
-        .insert({ provider: "razorpay", event_id: eventId });
-    } catch {
-      // In-memory fallback if DB table unpopulated
+      if (error) throw error;
+      alreadyProcessed = Boolean(existing);
+    } catch (err) {
+      console.error("[checkout/webhook] Idempotency pre-check failed:", err);
+      return NextResponse.json(
+        { success: false, error: "Could not verify webhook idempotency state." },
+        { status: 500 }
+      );
     }
 
+    if (alreadyProcessed) {
+      return NextResponse.json({ success: true, status: "already_processed", eventId });
+    }
+
+    // Do the critical, money-affecting work BEFORE claiming the event as
+    // processed — never the other way around. If this fails, the event
+    // must remain unclaimed so Razorpay's retry can attempt it again.
     if (eventType === "payment.captured") {
-      const razorpayOrderId = payload.payload?.payment?.entity?.order_id;
-      const razorpayPaymentId = payload.payload?.payment?.entity?.id;
+      const razorpayOrderId = payload.payload.payment.entity.order_id;
+      const razorpayPaymentId = payload.payload.payment.entity.id;
 
-      try {
-        const supabaseAdmin = createSupabasePrivilegedClient();
-        if (razorpayOrderId) {
-          await supabaseAdmin
-            .from("orders")
-            .update({
-              status: "paid",
-              razorpay_payment_id: razorpayPaymentId,
-              updated_at: new Date().toISOString(),
-            })
-            .eq("razorpay_order_id", razorpayOrderId);
-        }
-      } catch {
-        // Fallback handled
+      if (!razorpayOrderId) {
+        console.error("[checkout/webhook] payment.captured event missing order_id:", eventId);
+        return NextResponse.json(
+          { success: false, error: "Payment event missing order_id." },
+          { status: 400 }
+        );
+      }
+
+      const { data: updatedRows, error: updateError } = await supabaseAdmin
+        .from("orders")
+        .update({
+          status: "paid",
+          razorpay_payment_id: razorpayPaymentId,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("razorpay_order_id", razorpayOrderId)
+        .select("id");
+
+      if (updateError) {
+        console.error("[checkout/webhook] Order status update failed:", updateError);
+        return NextResponse.json(
+          { success: false, error: "Failed to update order status." },
+          { status: 500 }
+        );
+      }
+
+      if (!updatedRows || updatedRows.length === 0) {
+        // Signature was valid and the write succeeded, but no local order
+        // matched this razorpay_order_id. This is a real problem worth
+        // surfacing loudly (not a duplicate, not a soft no-op) — fail so
+        // Razorpay retries and this gets investigated if it keeps failing.
+        console.error(
+          "[checkout/webhook] No matching order for razorpay_order_id:",
+          razorpayOrderId
+        );
+        return NextResponse.json(
+          { success: false, error: "No matching order found for this payment." },
+          { status: 500 }
+        );
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      status: "processed",
-      eventId,
-    });
+    // Only now — after the critical work has genuinely succeeded — claim
+    // the event as processed. A failure here just risks one harmless retry
+    // (payment.captured update is idempotent: re-setting status to "paid"
+    // is a no-op), which is a far safer failure mode than claiming success
+    // before the real work happened.
+    const { error: claimError } = await supabaseAdmin
+      .from("processed_webhook_events")
+      .insert({ provider: "razorpay", event_id: eventId });
+
+    if (claimError) {
+      console.error("[checkout/webhook] Failed to record processed event:", claimError);
+      return NextResponse.json(
+        { success: false, error: "Order updated, but failed to record webhook as processed." },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true, status: "processed", eventId });
   } catch (err) {
     console.error("[checkout/webhook] Processing failed:", err);
     return NextResponse.json(

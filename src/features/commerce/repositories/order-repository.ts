@@ -57,6 +57,19 @@ export async function getOrderById(orderId: string): Promise<Order | null> {
       data: { user },
     } = await supabase.auth.getUser();
 
+    // Explicit deny for unauthenticated callers. RLS also enforces this
+    // (auth.uid() is null for anonymous requests, which can't match any
+    // user_id), but the application layer should not depend on RLS as the
+    // only enforcement point for something this sensitive — an order
+    // contains a customer's address and purchase details.
+    if (!user) {
+      if (process.env.NODE_ENV !== "production") {
+        const fallback = memoryOrders[orderId];
+        return fallback ? OrderSchema.parse(fallback) : null;
+      }
+      return null;
+    }
+
     let query = supabase.from("orders").select("*, order_items(*)").eq("id", orderId);
 
     // If caller is an authenticated non-admin user, enforce strict user_id scoping
@@ -174,26 +187,47 @@ export async function createOrderServerSide(input: {
         line_total_inr: item.quantity * item.unitPriceInr,
       }));
 
-      const { data: insertedItems } = await supabase
+      const { data: insertedItems, error: itemsError } = await supabase
         .from("order_items")
         .insert(orderItems)
         .select();
 
-      const fullOrder = {
-        ...insertedOrder,
-        items: insertedItems ?? orderItems,
-      };
+      if (itemsError || !insertedItems || insertedItems.length !== orderItems.length) {
+        // Items failed to persist — the order header exists but is
+        // incomplete. Compensate by removing it rather than returning a
+        // "successful" order with missing/wrong line items. This is a
+        // pragmatic two-statement compensation, not a true DB transaction;
+        // a Postgres RPC wrapping both inserts in one transaction is the
+        // more robust fix and is a reasonable follow-up, not required to
+        // close this specific bug.
+        console.error(
+          "[order-repository] order_items insert failed or incomplete for order",
+          insertedOrder.id,
+          itemsError
+        );
+        await supabase.from("orders").delete().eq("id", insertedOrder.id);
 
-      return OrderSchema.parse(fullOrder);
-    }
+        if (process.env.NODE_ENV === "production") {
+          throw new Error("Order item persistence failed; order was rolled back.");
+        }
+        // Non-production: fall through to the in-memory demo fallback below.
+      } else {
+        const fullOrder = {
+          ...insertedOrder,
+          items: insertedItems,
+        };
 
-    // The insert call completed without throwing, but Supabase reported an
-    // error or returned no row — this is a genuine persistence failure, not
-    // an "offline dev" case. Never silently fabricate a success in production.
-    if (process.env.NODE_ENV === "production") {
-      throw new Error(
-        `Order persistence failed: ${orderError?.message ?? "no row returned from insert"}`
-      );
+        return OrderSchema.parse(fullOrder);
+      }
+    } else {
+      // The insert call completed without throwing, but Supabase reported an
+      // error or returned no row — this is a genuine persistence failure, not
+      // an "offline dev" case. Never silently fabricate a success in production.
+      if (process.env.NODE_ENV === "production") {
+        throw new Error(
+          `Order persistence failed: ${orderError?.message ?? "no row returned from insert"}`
+        );
+      }
     }
   } catch (err) {
     if (process.env.NODE_ENV === "production") {

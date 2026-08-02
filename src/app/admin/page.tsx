@@ -88,6 +88,8 @@ const recentActivities = [
   },
 ] as const;
 
+import { requireAdmin } from "@/lib/auth/require-admin";
+
 const districtCoverage = [
   { district: "Bhubaneswar", centers: 2, status: "Active" },
   { district: "Cuttack", centers: 1, status: "Active" },
@@ -97,7 +99,8 @@ const districtCoverage = [
   { district: "Sambalpur", centers: 0, status: "Pending Verification" },
 ] as const;
 
-export default function AdminOverviewPage() {
+export default async function AdminOverviewPage() {
+  await requireAdmin();
   return (
     <div className="space-y-8">
       {/* Hero Header */}

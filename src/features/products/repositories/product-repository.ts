@@ -185,6 +185,18 @@ export async function getPublishedProductBySlug(
   return fallback ? ProductWithSpecsSchema.parse(fallback) : null;
 }
 
+export async function getPublishedProductById(
+  idOrSlug: string
+): Promise<ProductWithSpecs | null> {
+  const bySlug = await getPublishedProductBySlug(idOrSlug);
+  if (bySlug) return bySlug;
+
+  const foundFallback = Object.values(fallbackProducts).find(
+    (p) => p.id === idOrSlug || p.slug === idOrSlug
+  );
+  return foundFallback ? ProductWithSpecsSchema.parse(foundFallback) : null;
+}
+
 export async function listPublishedProductsByCategory(
   categorySlug: string
 ): Promise<ProductWithSpecs[]> {
@@ -231,4 +243,17 @@ export async function listPublishedProductsByCategory(
   return Object.values(fallbackProducts).filter(
     (p) => p.categorySlug === categorySlug || categorySlug === "dome-cameras"
   );
+}
+
+export async function listPublishedProductsForComparison(
+  idsOrSlugs: string[]
+): Promise<ProductWithSpecs[]> {
+  const results: ProductWithSpecs[] = [];
+  for (const identifier of idsOrSlugs) {
+    const product = await getPublishedProductById(identifier);
+    if (product) {
+      results.push(product);
+    }
+  }
+  return results;
 }

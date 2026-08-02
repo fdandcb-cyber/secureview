@@ -10,37 +10,13 @@ export const metadata: Metadata = {
   description: "Your bookmarked security cameras, recorders, and accessories.",
 };
 
-const savedProducts = [
-  {
-    id: "1",
-    slug: "hikvision-ds-2cd1043g2-i",
-    name: "Hikvision DS-2CD1043G2-I",
-    brand: "Hikvision",
-    category: "4MP IP Bullet",
-    price: "₹3,200",
-    specs: "4MP · 2.8mm · IP67 · 30m IR · PoE",
-  },
-  {
-    id: "2",
-    slug: "dahua-dh-ipc-hdw1439t1-a-led",
-    name: "Dahua DH-IPC-HDW1439T1-A-LED",
-    brand: "Dahua",
-    category: "Full Color IP Dome",
-    price: "₹3,800",
-    specs: "4MP · Full-Color LED · Built-in Mic",
-  },
-  {
-    id: "3",
-    slug: "hikvision-ds-7604nxi-k1-4p",
-    name: "Hikvision DS-7604NXI-K1/4P",
-    brand: "Hikvision",
-    category: "4ch PoE NVR",
-    price: "₹6,500",
-    specs: "4ch · 4K decode · 4 PoE ports · 1 SATA",
-  },
-];
 
-export default function AccountSavedProductsPage() {
+
+import { getSavedProductsForUser } from "@/features/users/repositories/saved-items-repository";
+
+export default async function AccountSavedProductsPage() {
+  const savedProducts = await getSavedProductsForUser();
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8 space-y-8">
       <nav className="flex items-center gap-2 text-sm text-slate-500">
@@ -68,16 +44,18 @@ export default function AccountSavedProductsPage() {
           <Card key={p.id} className="p-5 flex flex-col justify-between space-y-4">
             <div>
               <div className="flex items-center justify-between">
-                <Badge tone="neutral">{p.brand}</Badge>
+                <Badge tone="neutral">{p.model_number}</Badge>
                 <Bookmark className="h-4 w-4 text-amber-500 fill-amber-500" />
               </div>
               <h2 className="mt-3 text-sm font-bold text-slate-950">{p.name}</h2>
-              <p className="mt-1 text-xs text-slate-500">{p.specs}</p>
+              <p className="mt-1 text-xs text-slate-500">Product ID: {p.product_id}</p>
             </div>
 
             <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
-              <span className="text-base font-bold text-slate-950">{p.price}</span>
-              <Link href={`/products/${p.slug}`}>
+              <span className="text-base font-bold text-slate-950">
+                ₹{p.base_price_inr.toLocaleString("en-IN")}
+              </span>
+              <Link href={`/products/${p.product_id}`}>
                 <Button size="sm" variant="secondary">
                   View Specs →
                 </Button>

@@ -14,6 +14,8 @@ import {
   UserCheck,
 } from "lucide-react";
 
+import { requireAdmin } from "@/lib/auth/require-admin";
+
 const adminNav = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
   { label: "Products Catalog", href: "/admin/products", icon: Package },
@@ -24,11 +26,13 @@ const adminNav = [
   { label: "Site-Wide Content Control", href: "/admin/site-content", icon: Sliders },
 ] as const;
 
-export default function AdminLayout({
+export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const adminUser = await requireAdmin();
+
   return (
     <div className="min-h-screen bg-slate-100 text-slate-900 flex flex-col font-sans">
       {/* Top Admin Banner */}
@@ -36,7 +40,7 @@ export default function AdminLayout({
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="font-semibold tracking-wide">SECUREVIEW ADMIN CONSOLE</span>
-          <span className="text-slate-400">| Environment: Production Local</span>
+          <span className="text-slate-400">| Role: {adminUser.role.toUpperCase()}</span>
         </div>
         <Link
           href="/"
@@ -75,8 +79,8 @@ export default function AdminLayout({
             <div className="flex items-center gap-2">
               <UserCheck className="h-4 w-4 text-emerald-400" />
               <div>
-                <p className="font-semibold text-slate-200">Admin User</p>
-                <p className="text-[10px] text-slate-400">admin@secureview.in</p>
+                <p className="font-semibold text-slate-200 capitalize">{adminUser.role} Account</p>
+                <p className="text-[10px] text-slate-400 truncate max-w-[160px]">{adminUser.email}</p>
               </div>
             </div>
           </div>

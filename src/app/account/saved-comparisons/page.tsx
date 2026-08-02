@@ -10,16 +10,11 @@ export const metadata: Metadata = {
   description: "Re-open saved product comparison matrices.",
 };
 
-const savedComparisons = [
-  {
-    id: "comp-1",
-    name: "Hikvision vs Dahua 4MP Bullet Shootout",
-    productSlugs: ["hikvision-ds-2cd1043g2-i", "dahua-dh-ipc-hdw1439t1-a-led"],
-    date: "2026-07-28",
-  },
-];
+import { getSavedComparisonsForUser } from "@/features/users/repositories/saved-items-repository";
 
-export default function AccountSavedComparisonsPage() {
+export default async function AccountSavedComparisonsPage() {
+  const savedComparisons = await getSavedComparisonsForUser();
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-10 sm:px-6 lg:px-8 space-y-8">
       <nav className="flex items-center gap-2 text-sm text-slate-500">
@@ -46,13 +41,15 @@ export default function AccountSavedComparisonsPage() {
           <Card key={c.id} className="p-6 flex items-center justify-between">
             <div>
               <Badge tone="primary" className="mb-1">
-                {c.productSlugs.length} Products Compared
+                {c.product_ids.length} Products Compared
               </Badge>
               <h2 className="text-base font-bold text-slate-950">{c.name}</h2>
-              <p className="text-xs text-slate-500 mt-1">Saved on {c.date}</p>
+              <p className="text-xs text-slate-500 mt-1">
+                Saved on {new Date(c.created_at).toLocaleDateString("en-IN")}
+              </p>
             </div>
 
-            <Link href={`/compare?ids=${c.productSlugs.join(",")}`}>
+            <Link href={`/compare?ids=${c.product_ids.join(",")}`}>
               <Button variant="primary" size="sm">
                 Open Matrix <ArrowRight className="h-3.5 w-3.5 ml-1" />
               </Button>

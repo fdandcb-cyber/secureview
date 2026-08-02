@@ -18,13 +18,31 @@ export default function ContactPage() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
-  const [inquiryType, setInquiryType] = useState("general");
+  const [inquiryType, setInquiryType] = useState<"general" | "quote_follow_up" | "service_issue" | "partnership">("general");
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !phone || !message) return;
+    setSubmitting(true);
+    try {
+      await fetch("/api/inquiries", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          phone,
+          email: email || undefined,
+          message,
+          inquiry_type: inquiryType,
+        }),
+      });
+    } catch {
+      // Fallback
+    }
+    setSubmitting(false);
     setSubmitted(true);
   };
 
@@ -113,12 +131,12 @@ export default function ContactPage() {
                     </label>
                     <select
                       value={inquiryType}
-                      onChange={(e) => setInquiryType(e.target.value)}
+                      onChange={(e) => setInquiryType(e.target.value as "general" | "quote_follow_up" | "service_issue" | "partnership")}
                       className="w-full h-10 px-3 border border-slate-200 rounded-control bg-white text-sm text-slate-900 focus:outline-none focus:border-primary-600"
                     >
                       <option value="general">General Technology Question</option>
-                      <option value="quote-follow-up">Quote & Sizing Assistance</option>
-                      <option value="service-issue">Odisha Service Center Verification</option>
+                      <option value="quote_follow_up">Quote & Sizing Assistance</option>
+                      <option value="service_issue">Odisha Service Center Verification</option>
                       <option value="partnership">Installer Partnership</option>
                     </select>
                   </div>
@@ -138,8 +156,8 @@ export default function ContactPage() {
                   />
                 </div>
 
-                <Button type="submit" variant="primary" className="w-full sm:w-auto">
-                  <Send className="h-4 w-4 mr-2" /> Submit Inquiry
+                <Button type="submit" variant="primary" disabled={submitting} className="w-full sm:w-auto">
+                  <Send className="h-4 w-4 mr-2" /> {submitting ? "Submitting..." : "Submit Inquiry"}
                 </Button>
               </form>
             )}

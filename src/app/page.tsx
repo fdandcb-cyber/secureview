@@ -127,18 +127,20 @@ const faqs = [
   },
 ] as const;
 
+import { BRAND } from "@/config/brand";
+
 export default function HomePage() {
   // Schema Markup for AI crawlers & Google SEO
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "SecureView — CCTV & Security Technology Platform",
-    url: "http://localhost:3000",
+    name: `${BRAND.siteName} — CCTV & Security Technology Platform`,
+    url: BRAND.siteUrl,
     description:
-      "Educational CCTV decision platform helping buyers in Odisha select, calculate, and compare security technology with verified district service centers.",
+      `Educational CCTV decision platform helping buyers in ${BRAND.officeLocation} and Odisha select, calculate, and compare security technology with verified district service centers.`,
     publisher: {
       "@type": "Organization",
-      name: "SecureView Odisha",
+      name: BRAND.siteName,
     },
   };
 

@@ -1,4 +1,4 @@
-# CCTV & Security Knowledge Platform
+# Connectz Learning Center — CCTV & Security Knowledge Platform
 
 Phase 0 (Audit & Foundation) + start of Phase 1/2 (Design System & Layout Shell)
 per the Master Blueprint.

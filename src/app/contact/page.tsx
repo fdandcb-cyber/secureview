@@ -14,6 +14,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
+import { BRAND } from "@/config/brand";
+
 export default function ContactPage() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -47,14 +49,14 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 space-y-12">
+    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 space-y-12 font-sans">
       {/* Header */}
       <div className="max-w-3xl">
         <Badge tone="primary" className="mb-2">
           Contact & Support Portal
         </Badge>
         <h1 className="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-          Get in Touch with SecureView Odisha
+          Get in Touch with {BRAND.siteName}
         </h1>
         <p className="mt-3 text-base text-slate-700 leading-relaxed">
           Have a question about security camera specifications, local Odisha installer verification, or an existing quote? Send us an inquiry.
@@ -72,40 +74,38 @@ export default function ContactPage() {
                   Inquiry Submitted Successfully!
                 </h3>
                 <p className="text-xs text-slate-700">
-                  Thank you {name}. Our Odisha support team will reach out to you at {phone} shortly.
+                  Thank you {name}. Our support team will reach out to you at {phone} shortly.
                 </p>
                 <Button
                   variant="secondary"
                   size="sm"
                   onClick={() => setSubmitted(false)}
                 >
-                  Send Another Message
+                  Send Another Inquiry
                 </Button>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="space-y-4 text-sm">
+              <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block font-medium text-slate-900 mb-1">
+                    <label className="block font-medium text-slate-900 mb-1 text-xs">
                       Full Name <span className="text-red-500">*</span>
                     </label>
                     <Input
-                      type="text"
                       required
-                      placeholder="e.g. Ramesh Chandra"
+                      placeholder="e.g. Rakesh Mohanty"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                     />
                   </div>
 
                   <div>
-                    <label className="block font-medium text-slate-900 mb-1">
-                      Phone Number <span className="text-red-500">*</span>
+                    <label className="block font-medium text-slate-900 mb-1 text-xs">
+                      Phone / WhatsApp Number <span className="text-red-500">*</span>
                     </label>
                     <Input
-                      type="tel"
                       required
-                      placeholder="+91 94370 00000"
+                      placeholder={BRAND.mobile}
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                     />
@@ -114,19 +114,19 @@ export default function ContactPage() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block font-medium text-slate-900 mb-1">
+                    <label className="block font-medium text-slate-900 mb-1 text-xs">
                       Email Address (Optional)
                     </label>
                     <Input
                       type="email"
-                      placeholder="you@example.com"
+                      placeholder={BRAND.supportEmail}
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                     />
                   </div>
 
                   <div>
-                    <label className="block font-medium text-slate-900 mb-1">
+                    <label className="block font-medium text-slate-900 mb-1 text-xs">
                       Inquiry Category
                     </label>
                     <select
@@ -143,7 +143,7 @@ export default function ContactPage() {
                 </div>
 
                 <div>
-                  <label className="block font-medium text-slate-900 mb-1">
+                  <label className="block font-medium text-slate-900 mb-1 text-xs">
                     Your Message / Requirements <span className="text-red-500">*</span>
                   </label>
                   <textarea
@@ -176,7 +176,7 @@ export default function ContactPage() {
                 <Phone className="h-4 w-4 text-primary-700 shrink-0 mt-0.5" />
                 <div>
                   <strong className="text-slate-950 block">Phone & WhatsApp:</strong>
-                  +91 94370 12345
+                  <a href={BRAND.mobileHref} className="hover:underline font-bold text-slate-900">{BRAND.mobile}</a>
                 </div>
               </div>
 
@@ -184,15 +184,15 @@ export default function ContactPage() {
                 <Mail className="h-4 w-4 text-primary-700 shrink-0 mt-0.5" />
                 <div>
                   <strong className="text-slate-950 block">Email Support:</strong>
-                  connectzsalesandservices@gmail.com
+                  <a href={`mailto:${BRAND.supportEmail}`} className="hover:underline font-bold text-slate-900">{BRAND.supportEmail}</a>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
                 <MapPin className="h-4 w-4 text-primary-700 shrink-0 mt-0.5" />
                 <div>
-                  <strong className="text-slate-950 block">Headquarters:</strong>
-                  Saheed Nagar, Bhubaneswar, Odisha - 751007
+                  <strong className="text-slate-950 block">Headquarters / Office:</strong>
+                  {BRAND.officeLocation}
                 </div>
               </div>
 

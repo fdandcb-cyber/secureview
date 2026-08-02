@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { listOrdersForUser } from "@/features/commerce/repositories/order-repository";
+import { BRAND } from "@/config/brand";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Truck, ArrowRight } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Your Orders — SecureView Account",
+  title: `Your Orders — ${BRAND.siteName} Account`,
   description: "View past orders, payment status, invoices, and shipment tracking.",
 };
 

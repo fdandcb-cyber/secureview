@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getQuote } from "@/features/quotes/repositories/quote-repository";
+import { BRAND } from "@/config/brand";
 import { ShieldCheck } from "lucide-react";
 
 type PrintQuotePageProps = {
@@ -7,7 +8,7 @@ type PrintQuotePageProps = {
 };
 
 export const metadata: Metadata = {
-  title: "Printable System Quote — SecureView",
+  title: `Printable System Quote — ${BRAND.siteName}`,
   description: "Official printable CCTV system quote specification and invoice breakdown.",
 };
 
@@ -22,12 +23,12 @@ export default async function PrintQuotePage({ params }: PrintQuotePageProps) {
         <div>
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-6 w-6 text-primary-700" />
-            <h1 className="text-2xl font-bold tracking-tight text-slate-950">
-              SECUREVIEW PLATFORM QUOTE
+            <h1 className="text-xl font-bold tracking-tight text-slate-950">
+              {BRAND.siteName.toUpperCase()} QUOTE
             </h1>
           </div>
           <p className="text-xs text-slate-500 mt-1">
-            Odisha Verified Security System Specification & Pricing
+            Odisha Verified Security System Specification & Pricing ({BRAND.supportEmail})
           </p>
         </div>
 
@@ -93,8 +94,8 @@ export default async function PrintQuotePage({ params }: PrintQuotePageProps) {
 
       {/* Footer Instructions */}
       <div className="mt-12 pt-6 border-t border-slate-300 text-[11px] text-slate-500 leading-relaxed text-center">
-        <p>This is a computer-generated quote specification issued by SecureView Odisha Platform.</p>
-        <p>Prices and components are snapshot-locked for 7 days from issue date.</p>
+        <p>This is an official computer-generated quote specification issued by {BRAND.siteName}.</p>
+        <p>Prices and components are snapshot-locked for 7 days from issue date. Contact: {BRAND.mobile} ({BRAND.supportEmail}).</p>
       </div>
     </div>
   );

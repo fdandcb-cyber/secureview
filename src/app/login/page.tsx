@@ -6,6 +6,8 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ShieldCheck, Lock, Mail, ArrowRight, AlertCircle } from "lucide-react";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
 
+import { BRAND } from "@/config/brand";
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -73,7 +75,7 @@ function LoginForm() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@secureview.in"
+              placeholder={BRAND.adminLoginEmail}
               className="block w-full pl-9 pr-3 py-2.5 bg-slate-950 border border-slate-800 rounded-control text-sm text-white placeholder-slate-500 focus:outline-none focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition"
             />
           </div>
@@ -134,7 +136,7 @@ export default function LoginPage() {
           <ShieldCheck className="h-7 w-7" />
         </div>
         <h2 className="text-2xl font-bold tracking-tight text-white sm:text-3xl">
-          SecureView Admin Portal
+          {BRAND.siteName} Admin Portal
         </h2>
         <p className="mt-2 text-xs text-slate-400">
           Sign in to access platform management and CMS controls.

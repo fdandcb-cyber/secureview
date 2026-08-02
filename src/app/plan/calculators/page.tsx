@@ -1,5 +1,7 @@
 "use client";
 
+import { calculateStorageRetention } from "@/features/calculators/storage/calculator-engine";
+
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -72,17 +74,22 @@ export default function CalculatorsPage() {
   const [batteryVoltage] = useState(12);
   const [inverterEfficiency] = useState(80);
 
-  // Storage calculation
-  const bitratePerCamera =
-    codec === "h265"
-      ? resolution * 0.8 // Mbps rough estimate for H.265
-      : resolution * 1.6; // Mbps rough estimate for H.264
+  // Storage calculation using verified calculator engine
+  const storageResult = calculateStorageRetention({
+    cameras,
+    resolutionMp: resolution,
+    fps,
+    codec,
+    hoursPerDay: recordingHours,
+    hddSizeTb: hddSize,
+  });
 
-  const totalBitrateGBPerHour =
-    (cameras * bitratePerCamera * 3600) / (8 * 1024);
-  const dailyStorageGB = totalBitrateGBPerHour * recordingHours;
-  const usableHddGB = hddSize * 1000 * 0.93; // 93% usable
-  const recordingDays = Math.floor(usableHddGB / dailyStorageGB);
+  const {
+    recordingDays,
+    dailyStorageGb: dailyStorageGB,
+    usableHddGb: usableHddGB,
+    bitratePerCameraMbps: bitratePerCamera,
+  } = storageResult;
 
   // PoE calculation
   const totalPoeDraw = poeCameras * cameraWatts;

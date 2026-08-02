@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { Search, ClipboardList, User } from "lucide-react";
 
+import { BRAND } from "@/config/brand";
+
 const primaryNav = [
   { label: "Learn", href: "/learn" },
   { label: "Products", href: "/products" },
@@ -15,9 +17,11 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
         <Link
           href="/"
-          className="shrink-0 text-lg font-semibold tracking-tight text-slate-950"
+          aria-label={BRAND.siteName}
+          className="shrink-0 text-base sm:text-lg font-bold tracking-tight text-slate-950 flex items-center gap-1"
         >
-          SecureView<span className="text-primary-700">.</span>
+          <span>{BRAND.siteName.split(" ")[0]}</span>
+          <span className="text-primary-700">{BRAND.siteName.split(" ").slice(1).join(" ")}</span>
         </Link>
 
         <nav

@@ -113,6 +113,8 @@ const checklist = [
   "What is the return/replacement policy if the product is DOA or mismatched?",
 ] as const;
 
+import { BRAND } from "@/config/brand";
+
 export default function MarketplaceRisksPage() {
   const jsonLd = {
     "@context": "https://schema.org",
@@ -121,9 +123,9 @@ export default function MarketplaceRisksPage() {
     description: "Honest guide explaining seller authenticity, warranty eligibility, cable/HDD quality, and after-sales gaps for online marketplace purchases.",
     author: {
       "@type": "Organization",
-      name: "SecureView Technical Editorial",
+      name: `${BRAND.siteName} Technical Editorial`,
     },
-    url: "http://localhost:3000/learn/guides/online-marketplace-risks",
+    url: `${BRAND.siteUrl}/learn/guides/online-marketplace-risks`,
   };
 
   return (

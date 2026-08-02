@@ -10,14 +10,19 @@
 | **Quote Engine** | **Completed (Phase 5)** | `src/features/quotes/repositories/` | Supabase Postgres (`quotes`, `quote_items`) |
 | **Commerce & Checkout Engine** | **Completed (Phase 5)** | `src/features/commerce/repositories/` | Razorpay API + `orders` + `order_items` |
 | **Shiprocket Fulfillment** | **Completed (Phase 5)** | `src/features/commerce/services/` | Shiprocket API Client Wrapper |
-| **Admin Console & CRUD** | **Completed (Phase 6)** | `src/app/admin/` | `server-privileged.ts` + `is_admin()` RLS |
+| **Admin Console & CRUD** | **Completed (Phase 6)** | `src/app/admin/` | `server-privileged.ts` + `requireAdmin()` |
+| **Connectz Rebrand & Final Fixes** | **Completed (Final)** | `src/config/brand.ts` | Single Source of Truth `BRAND` Config |
 
 ## Admin Credentials Configuration
+- **Site Name**: `Connectz Learning Center`
+- **Domain**: `connectzss.store` (`https://connectzss.store`)
+- **Support Email**: `support@connectzss.shop`
 - **Admin Email**: `connectzsalesandservices@gmail.com`
-- **Default Admin Password**: `SecureView@Admin2026!`
 - **Security Definer Function**: `public.is_admin()` linked to `admin_users` table.
 
 ## Architecture Notes
 - All components query database repositories instead of direct Supabase SDK calls.
+- Centralized `BRAND` configuration in `src/config/brand.ts` serves as single source of truth.
+- Development auth guard bypass (`NODE_ENV === "development"`) is completely removed; unauthenticated `/admin` requests strictly redirect to `/login`.
 - Checkout pricing is strictly calculated server-side to prevent price tampering.
 - Webhook endpoints verify signatures and check `processed_webhook_events` for idempotency.

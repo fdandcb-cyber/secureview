@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { BRAND } from "@/config/brand";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy",
+  title: `Privacy Policy — ${BRAND.siteName}`,
   description:
-    "How SecureView collects, uses, and protects your personal information.",
+    `How ${BRAND.siteName} collects, uses, and protects your personal information.`,
 };
 
 export default function PrivacyPage() {
@@ -99,10 +100,10 @@ export default function PrivacyPage() {
           <p className="mt-3">
             To exercise any of these rights, contact us at{" "}
             <a
-              href="mailto:privacy@secureview.in"
+              href={`mailto:${BRAND.supportEmail}`}
               className="text-primary-700 hover:underline"
             >
-              privacy@secureview.in
+              {BRAND.supportEmail}
             </a>
             .
           </p>
@@ -129,10 +130,10 @@ export default function PrivacyPage() {
             If you have questions about this privacy policy or how we handle
             your data, reach out at{" "}
             <a
-              href="mailto:privacy@secureview.in"
+              href={`mailto:${BRAND.supportEmail}`}
               className="text-primary-700 hover:underline"
             >
-              privacy@secureview.in
+              {BRAND.supportEmail}
             </a>{" "}
             or through our{" "}
             <a href="/contact" className="text-primary-700 hover:underline">

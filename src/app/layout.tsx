@@ -4,6 +4,8 @@ import { SiteHeader } from "@/components/layout/site-header";
 import { SiteFooter } from "@/components/layout/site-footer";
 import "./globals.css";
 
+import { BRAND } from "@/config/brand";
+
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
@@ -16,11 +18,11 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "CCTV & Security Knowledge Platform",
-    template: "%s | CCTV & Security Knowledge Platform",
+    default: `${BRAND.siteName} — CCTV & Security Knowledge Platform`,
+    template: `%s | ${BRAND.siteName}`,
   },
   description:
-    "Understand what CCTV and security equipment to buy, why, and how it works together — with neutral comparisons, calculators, and verified local service centers across Odisha.",
+    `Understand security camera specifications, installation planning, and equipment comparisons with ${BRAND.siteName} — serving ${BRAND.officeLocation} and Odisha districts.`,
 };
 
 export default function RootLayout({

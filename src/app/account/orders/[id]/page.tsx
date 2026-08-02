@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getOrderById } from "@/features/commerce/repositories/order-repository";
+import { BRAND } from "@/config/brand";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
@@ -14,7 +15,7 @@ export async function generateMetadata({
 }: OrderDetailPageProps): Promise<Metadata> {
   const { id } = await params;
   return {
-    title: `Order #${id.toUpperCase()} Details — SecureView`,
+    title: `Order #${id.toUpperCase()} Details — ${BRAND.siteName}`,
   };
 }
 

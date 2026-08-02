@@ -12,10 +12,22 @@ export type AdminSessionInfo = {
 
 /**
  * Server-side authorization guard for admin pages.
- * Gets user session via Supabase Auth and verifies record in `admin_users` DB table.
+ * Validates user session via Supabase Auth and verifies record in `admin_users` DB table.
  * Redirects to `/login` if unauthenticated or unauthorized.
  */
 export async function requireAdmin(): Promise<AdminSessionInfo> {
+  // WARNING: DEV_BYPASS_ADMIN_AUTH must NEVER be set to "true" in production or staging environments!
+  if (process.env.DEV_BYPASS_ADMIN_AUTH === "true") {
+    console.warn(
+      "WARNING: DEV_BYPASS_ADMIN_AUTH is enabled. Bypassing Supabase admin authentication guard for local offline development. This must NEVER be set in any deployed environment!"
+    );
+    return {
+      userId: "dev-admin-id",
+      email: "connectzsalesandservices@gmail.com",
+      role: "admin",
+    };
+  }
+
   try {
     const supabase = await createSupabaseServerClient();
     const {
@@ -41,27 +53,20 @@ export async function requireAdmin(): Promise<AdminSessionInfo> {
 
     return {
       userId: user.id,
-      email: user.email ?? "admin@secureview.in",
+      email: user.email ?? "connectzsalesandservices@gmail.com",
       role,
     };
   } catch (err) {
     if (err instanceof Error && err.message.includes("NEXT_REDIRECT")) {
       throw err;
     }
-    // Fallback for offline/development demo environment if auth session cookies are unpopulated
-    if (process.env.NODE_ENV === "development") {
-      return {
-        userId: "dev-admin-id",
-        email: "connectzsalesandservices@gmail.com",
-        role: "admin",
-      };
-    }
+    // Fail closed: Redirect to login on any authentication or database error
     redirect("/login?error=Admin+access+required");
   }
 }
 
 /**
- * Strict authorization guard for super-admin actions (e.g. managing admin users).
+ * Strict authorization guard for super-admin actions (e.g., managing admin users).
  * Requires role = 'admin' specifically; blocks 'editor' roles.
  */
 export async function requireSuperAdmin(): Promise<AdminSessionInfo> {

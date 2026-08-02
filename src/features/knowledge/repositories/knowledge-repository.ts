@@ -50,3 +50,32 @@ export async function getArticleBySlug(slug: string): Promise<KnowledgeArticle |
 
   return fallbackArticles[slug] ?? null;
 }
+
+export async function listPublishedArticles(
+  category?: KnowledgeArticle["category"]
+): Promise<KnowledgeArticle[]> {
+  try {
+    const supabase = await createSupabaseServerClient();
+    let query = supabase
+      .from("knowledge_articles")
+      .select("*")
+      .eq("status", "published");
+
+    if (category) {
+      query = query.eq("category", category);
+    }
+
+    const { data, error } = await query;
+    if (!error && data && data.length > 0) {
+      return data as KnowledgeArticle[];
+    }
+  } catch {
+    // Graceful fallback
+  }
+
+  const list = Object.values(fallbackArticles);
+  if (category) {
+    return list.filter((a) => a.category === category);
+  }
+  return list;
+}

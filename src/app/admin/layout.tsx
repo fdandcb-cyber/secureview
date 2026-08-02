@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { BRAND } from "@/config/brand";
 
 const adminNav = [
   { label: "Overview", href: "/admin", icon: LayoutDashboard },
@@ -39,7 +40,7 @@ export default async function AdminLayout({
       <div className="bg-slate-950 text-white px-4 py-2 text-xs flex items-center justify-between border-b border-slate-800">
         <div className="flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="font-semibold tracking-wide">SECUREVIEW ADMIN CONSOLE</span>
+          <span className="font-semibold tracking-wide">{BRAND.siteName.toUpperCase()} ADMIN CONSOLE</span>
           <span className="text-slate-400">| Role: {adminUser.role.toUpperCase()}</span>
         </div>
         <Link
@@ -57,7 +58,7 @@ export default async function AdminLayout({
           <div className="p-4 border-b border-slate-800">
             <Link href="/admin" className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
               <ShieldAlert className="h-5 w-5 text-primary-600" />
-              Platform Admin
+              Connectz Admin
             </Link>
             <p className="text-[11px] text-slate-400 mt-0.5">Control Center & CMS</p>
           </div>

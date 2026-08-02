@@ -10,9 +10,10 @@ import {
   MessageSquare,
   ArrowRight,
 } from "lucide-react";
+import { BRAND } from "@/config/brand";
 
 export const metadata: Metadata = {
-  title: "Account Overview — SecureView",
+  title: `Account Overview — ${BRAND.siteName}`,
   description: "Customer account dashboard, profile settings, orders, quotes, wishlists, and inquiries.",
 };
 

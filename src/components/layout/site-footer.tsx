@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BRAND } from "@/config/brand";
 
 const footerColumns = [
   {
@@ -69,8 +70,15 @@ export function SiteFooter() {
             Product specifications shown are verified where marked; always
             confirm current price and availability before purchase.
           </p>
-          <p className="mt-2">
-            © {new Date().getFullYear()} SecureView. Built for Odisha, made to scale.
+          <div className="mt-3 flex flex-wrap items-center gap-4 text-xs text-slate-600">
+            <span>Support: <a href={`mailto:${BRAND.supportEmail}`} className="text-primary-700 font-semibold hover:underline">{BRAND.supportEmail}</a></span>
+            <span>·</span>
+            <span>Helpline: <a href={BRAND.mobileHref} className="text-primary-700 font-semibold hover:underline">{BRAND.mobile}</a></span>
+            <span>·</span>
+            <span>Location: {BRAND.officeLocation}</span>
+          </div>
+          <p className="mt-3 text-xs text-slate-400">
+            © {new Date().getFullYear()} {BRAND.siteName}. Serving Cuttack, Bhubaneswar, Puri, and all Odisha districts.
           </p>
         </div>
       </div>

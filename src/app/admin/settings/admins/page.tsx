@@ -1,4 +1,6 @@
 import { requireSuperAdmin } from "@/lib/auth/require-admin";
+import { createSupabasePrivilegedClient } from "@/lib/supabase/server-privileged";
+import { BRAND } from "@/config/brand";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { ShieldCheck, UserCheck, Lock } from "lucide-react";
@@ -10,26 +12,40 @@ type AdminUserRecord = {
   createdAt: string;
 };
 
-const adminUsersList: AdminUserRecord[] = [
-  {
-    id: "admin-1",
-    email: "connectzsalesandservices@gmail.com",
-    role: "admin",
-    createdAt: "2026-08-01",
-  },
-  {
-    id: "admin-2",
-    email: "editor@secureview.in",
-    role: "editor",
-    createdAt: "2026-08-02",
-  },
-];
-
 export default async function SuperAdminSettingsPage() {
   const superAdminInfo = await requireSuperAdmin();
 
+  let adminUsersList: AdminUserRecord[] = [
+    {
+      id: superAdminInfo.userId,
+      email: superAdminInfo.email || BRAND.adminLoginEmail,
+      role: superAdminInfo.role,
+      createdAt: new Date().toISOString().split("T")[0],
+    },
+  ];
+
+  try {
+    const supabaseAdmin = createSupabasePrivilegedClient();
+    const { data: dbAdminRows } = await supabaseAdmin
+      .from("admin_users")
+      .select("*");
+
+    if (dbAdminRows && dbAdminRows.length > 0) {
+      adminUsersList = dbAdminRows.map((row) => ({
+        id: row.id || row.user_id,
+        email: row.user_id === superAdminInfo.userId ? superAdminInfo.email : BRAND.adminLoginEmail,
+        role: (row.role ?? "editor") as "admin" | "editor",
+        createdAt: row.created_at
+          ? new Date(row.created_at).toISOString().split("T")[0]
+          : new Date().toISOString().split("T")[0],
+      }));
+    }
+  } catch {
+    // Fallback to active super admin info
+  }
+
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
         <div>
           <div className="flex items-center gap-2">

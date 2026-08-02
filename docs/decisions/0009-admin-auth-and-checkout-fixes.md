@@ -29,6 +29,7 @@ Prior audit of the SecureView CCTV Platform identified three critical security v
 
 ### 1. Server Authorization Guard (`src/lib/auth/require-admin.ts`)
 - Implemented `requireAdmin()` server guard using `@supabase/ssr` cookies and `admin_users` database verification.
+- Completely removed `process.env.NODE_ENV === "development"` fallback in favor of strict redirection to `/login`. Local offline dev bypass requires explicit opt-in via `DEV_BYPASS_ADMIN_AUTH="true"` with console warning logging.
 - Added strict `requireSuperAdmin()` requiring `role = 'admin'` for privileged management routes (`/admin/settings/admins`).
 - Wired `requireAdmin()` into `src/app/admin/layout.tsx` and all top-level `/admin/**/page.tsx` server component entrypoints.
 - Built `/login/page.tsx` with email/password authentication.

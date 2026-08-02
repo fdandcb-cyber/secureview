@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { BRAND } from "@/config/brand";
 
 export const metadata: Metadata = {
-  title: "Terms of Service",
+  title: `Terms of Service — ${BRAND.siteName}`,
   description:
-    "Terms and conditions governing use of the SecureView CCTV & Security Knowledge Platform.",
+    `Terms and conditions governing use of ${BRAND.siteName}.`,
 };
 
 export default function TermsPage() {
@@ -16,7 +17,7 @@ export default function TermsPage() {
         Terms of Service
       </h1>
       <p className="mt-4 text-sm text-slate-500">
-        Last updated: August 1, 2026
+        Last updated: August 2, 2026
       </p>
 
       <div className="mt-10 space-y-8 text-sm leading-relaxed text-slate-700">
@@ -26,9 +27,9 @@ export default function TermsPage() {
           </h2>
           <p className="mt-3">
             These Terms of Service (&quot;Terms&quot;) govern your use of
-            SecureView (&quot;the Platform&quot;), a CCTV and security
+            {BRAND.siteName} (&quot;the Platform&quot;), a CCTV and security
             technology knowledge, comparison, and commerce platform operated
-            from Odisha, India. By using the Platform, you agree to these Terms.
+            from {BRAND.officeLocation}, India. By using the Platform, you agree to these Terms.
           </p>
         </section>
 
@@ -97,7 +98,7 @@ export default function TermsPage() {
             6. Warranty & Returns
           </h2>
           <p className="mt-3">
-            Products sold through SecureView carry the manufacturer&apos;s
+            Products sold through {BRAND.siteName} carry the manufacturer&apos;s
             warranty. Warranty terms, eligibility, and claim procedures vary by
             brand and product — we display these clearly on each product page
             and in your order confirmation. Our warranty guidance section
@@ -112,7 +113,7 @@ export default function TermsPage() {
           </h2>
           <p className="mt-3">
             The Service Directory lists installers and service centers verified
-            by the SecureView team. Verification means we have confirmed the
+            by the {BRAND.siteName} team. Verification means we have confirmed the
             business exists, checked brand authorization status where
             applicable, and assessed basic service capability. It does not
             constitute a guarantee of service quality, pricing, or outcomes.
@@ -128,7 +129,7 @@ export default function TermsPage() {
           <p className="mt-3">
             Content on this Platform — including articles, guides, calculator
             formulas, comparison frameworks, and design — is the property of
-            SecureView unless otherwise attributed. Product names, logos, and
+            {BRAND.siteName} unless otherwise attributed. Product names, logos, and
             images belong to their respective manufacturers.
           </p>
         </section>
@@ -140,7 +141,7 @@ export default function TermsPage() {
           <p className="mt-3">
             The Platform is provided &quot;as is.&quot; While we strive for
             accuracy and reliability, we do not warrant uninterrupted service or
-            error-free content. SecureView&apos;s liability for any claim
+            error-free content. {BRAND.siteName}&apos;s liability for any claim
             arising from your use of the Platform is limited to the amount you
             paid for the specific product or service in question.
           </p>
@@ -153,7 +154,7 @@ export default function TermsPage() {
           <p className="mt-3">
             These Terms are governed by the laws of India. Any disputes arising
             from the use of this Platform shall be subject to the jurisdiction
-            of the courts in Bhubaneswar, Odisha.
+            of the courts in Cuttack / Bhubaneswar, Odisha.
           </p>
         </section>
 
@@ -176,10 +177,10 @@ export default function TermsPage() {
           <p className="mt-2">
             Contact us at{" "}
             <a
-              href="mailto:legal@secureview.in"
+              href={`mailto:${BRAND.supportEmail}`}
               className="text-primary-700 hover:underline"
             >
-              legal@secureview.in
+              {BRAND.supportEmail}
             </a>{" "}
             or through our{" "}
             <a href="/contact" className="text-primary-700 hover:underline">

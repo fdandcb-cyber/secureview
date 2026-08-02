@@ -1,22 +1,23 @@
 import type { Metadata } from "next";
+import { BRAND } from "@/config/brand";
 
 export const metadata: Metadata = {
-  title: "About SecureView",
+  title: `About ${BRAND.siteName}`,
   description:
-    "We explain CCTV and security technology in plain language, verify local service centers, and help Odisha buyers make informed decisions.",
+    `We explain CCTV and security technology in plain language, verify local service centers, and help Odisha buyers make informed decisions.`,
 };
 
 export default function AboutPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "SecureView",
-    url: "http://localhost:3000/about",
-    logo: "http://localhost:3000/favicon.ico",
+    name: BRAND.siteName,
+    url: `${BRAND.siteUrl}/about`,
+    logo: `${BRAND.siteUrl}/favicon.ico`,
     description: "Education-first CCTV decision and security technology platform in Odisha, India.",
     address: {
       "@type": "PostalAddress",
-      addressLocality: "Bhubaneswar",
+      addressLocality: BRAND.officeLocation,
       addressRegion: "Odisha",
       addressCountry: "IN",
     },
@@ -37,7 +38,7 @@ export default function AboutPage() {
 
       <div className="mt-8 space-y-6 text-base leading-relaxed text-slate-700">
         <p>
-          SecureView started from a simple frustration: buying a CCTV system in
+          {BRAND.siteName} started from a simple frustration: buying a CCTV system in
           Odisha meant trusting a marketplace listing with no context —
           unclear warranty terms, unverifiable cable and hard-disk quality, and
           nobody to call when the installation goes wrong.

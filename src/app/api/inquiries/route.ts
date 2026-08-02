@@ -14,7 +14,7 @@ const inquiryInputSchema = z.object({
 export async function POST(request: Request) {
   // Rate limiting check (§8)
   const clientIp = request.headers.get("x-forwarded-for") ?? "anonymous-client";
-  const limit = checkRateLimit(`inquiry-${clientIp}`, { windowMs: 60_000, maxRequests: 5 });
+  const limit = await checkRateLimit(`inquiry-${clientIp}`, { windowMs: 60_000, maxRequests: 5 });
 
   if (!limit.allowed) {
     return NextResponse.json(

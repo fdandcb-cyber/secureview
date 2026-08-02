@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { OrderSchema, type Order, type ShippingAddress } from "../schemas";
+import { isProduction } from "@/config/env";
 
 const memoryOrders: Record<string, Order> = {
   "ord-1001": {
@@ -57,13 +58,9 @@ export async function getOrderById(orderId: string): Promise<Order | null> {
       data: { user },
     } = await supabase.auth.getUser();
 
-    // Explicit deny for unauthenticated callers. RLS also enforces this
-    // (auth.uid() is null for anonymous requests, which can't match any
-    // user_id), but the application layer should not depend on RLS as the
-    // only enforcement point for something this sensitive — an order
-    // contains a customer's address and purchase details.
+    // Explicit deny for unauthenticated callers
     if (!user) {
-      if (process.env.NODE_ENV !== "production") {
+      if (!isProduction()) {
         const fallback = memoryOrders[orderId];
         return fallback ? OrderSchema.parse(fallback) : null;
       }
@@ -74,7 +71,6 @@ export async function getOrderById(orderId: string): Promise<Order | null> {
 
     // If caller is an authenticated non-admin user, enforce strict user_id scoping
     if (user) {
-      // Check if admin user
       const { data: adminData } = await supabase
         .from("admin_users")
         .select("role")
@@ -95,8 +91,7 @@ export async function getOrderById(orderId: string): Promise<Order | null> {
     // Database error handling
   }
 
-  // Demo fallback strictly gated for non-production environments
-  if (process.env.NODE_ENV !== "production") {
+  if (!isProduction()) {
     const fallback = memoryOrders[orderId];
     return fallback ? OrderSchema.parse(fallback) : null;
   }
@@ -116,8 +111,7 @@ export async function listOrdersForUser(): Promise<Order[]> {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      // Unauthenticated user has zero access to orders
-      if (process.env.NODE_ENV !== "production") {
+      if (!isProduction()) {
         return Object.values(memoryOrders);
       }
       return [];
@@ -136,7 +130,7 @@ export async function listOrdersForUser(): Promise<Order[]> {
     // Controlled error handling
   }
 
-  if (process.env.NODE_ENV !== "production") {
+  if (!isProduction()) {
     return Object.values(memoryOrders);
   }
 
@@ -144,7 +138,8 @@ export async function listOrdersForUser(): Promise<Order[]> {
 }
 
 /**
- * Creates an order in the database and recomputes authoritative prices server-side.
+ * Creates an order transactionally via Postgres RPC `create_order_with_items` (§1).
+ * Server-side recomputation of totals + single atomic Postgres transaction.
  */
 export async function createOrderServerSide(input: {
   items: Array<{ productId: string; quantity: number; unitPriceInr: number }>;
@@ -158,90 +153,57 @@ export async function createOrderServerSide(input: {
   const gst = Math.round(subtotal * 0.18);
   const total = subtotal + gst;
 
+  const itemsJsonb = input.items.map((item) => ({
+    product_id: item.productId,
+    quantity: item.quantity,
+    unit_price_inr: item.unitPriceInr,
+    line_total_inr: item.quantity * item.unitPriceInr,
+  }));
+
   try {
     const supabase = await createSupabaseServerClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
-    const { data: insertedOrder, error: orderError } = await supabase
-      .from("orders")
-      .insert({
-        user_id: user?.id ?? null,
-        status: "pending_payment",
-        subtotal_inr: subtotal,
-        shipping_inr: 0,
-        total_inr: total,
-        shipping_address: input.address,
-        razorpay_order_id: input.razorpayOrderId,
-      })
-      .select()
-      .single();
-
-    if (!orderError && insertedOrder) {
-      const orderItems = input.items.map((item) => ({
-        order_id: insertedOrder.id,
-        product_id: item.productId,
-        quantity: item.quantity,
-        unit_price_inr: item.unitPriceInr,
-        line_total_inr: item.quantity * item.unitPriceInr,
-      }));
-
-      const { data: insertedItems, error: itemsError } = await supabase
-        .from("order_items")
-        .insert(orderItems)
-        .select();
-
-      if (itemsError || !insertedItems || insertedItems.length !== orderItems.length) {
-        // Items failed to persist — the order header exists but is
-        // incomplete. Compensate by removing it rather than returning a
-        // "successful" order with missing/wrong line items. This is a
-        // pragmatic two-statement compensation, not a true DB transaction;
-        // a Postgres RPC wrapping both inserts in one transaction is the
-        // more robust fix and is a reasonable follow-up, not required to
-        // close this specific bug.
-        console.error(
-          "[order-repository] order_items insert failed or incomplete for order",
-          insertedOrder.id,
-          itemsError
-        );
-        await supabase.from("orders").delete().eq("id", insertedOrder.id);
-
-        if (process.env.NODE_ENV === "production") {
-          throw new Error("Order item persistence failed; order was rolled back.");
-        }
-        // Non-production: fall through to the in-memory demo fallback below.
-      } else {
-        const fullOrder = {
-          ...insertedOrder,
-          items: insertedItems,
-        };
-
-        return OrderSchema.parse(fullOrder);
+    const { data: createdOrder, error: rpcError } = await supabase.rpc(
+      "create_order_with_items",
+      {
+        p_user_id: user?.id ?? null,
+        p_subtotal_inr: subtotal,
+        p_shipping_inr: 0,
+        p_total_inr: total,
+        p_shipping_address: input.address,
+        p_razorpay_order_id: input.razorpayOrderId,
+        p_items: itemsJsonb,
       }
-    } else {
-      // The insert call completed without throwing, but Supabase reported an
-      // error or returned no row — this is a genuine persistence failure, not
-      // an "offline dev" case. Never silently fabricate a success in production.
-      if (process.env.NODE_ENV === "production") {
-        throw new Error(
-          `Order persistence failed: ${orderError?.message ?? "no row returned from insert"}`
-        );
+    );
+
+    if (!rpcError && createdOrder) {
+      // Fetch full order with items for response validation
+      const { data: fullOrderData } = await supabase
+        .from("orders")
+        .select("*, order_items(*)")
+        .eq("id", createdOrder.id)
+        .single();
+
+      if (fullOrderData) {
+        return OrderSchema.parse(fullOrderData);
       }
+    }
+
+    if (isProduction()) {
+      throw new Error(
+        `Order RPC persistence failed: ${rpcError?.message ?? "no row returned from RPC"}`
+      );
     }
   } catch (err) {
-    if (process.env.NODE_ENV === "production") {
-      // Re-throw in production — the caller (checkout route) must not treat
-      // this as a successful order creation. Falling through to the demo
-      // fallback below would silently report success for an order that was
-      // never persisted anywhere.
+    if (isProduction()) {
       throw err;
     }
-    // Non-production: fall through to the in-memory demo fallback below.
   }
 
-  // Development/demo fallback object — only reachable in non-production
-  // environments, since both failure paths above re-throw in production.
+  // Non-production offline demo fallback
   const orderId = `ord-${Date.now()}`;
   const newOrder: Order = {
     id: orderId,
@@ -266,10 +228,6 @@ export async function createOrderServerSide(input: {
     })),
   };
 
-  // Reachable only in non-production: both failure paths above throw when
-  // NODE_ENV === "production", so this demo fallback is guaranteed to be
-  // non-production code at this point.
   memoryOrders[orderId] = newOrder;
-
   return newOrder;
 }

@@ -8,8 +8,12 @@ import { z } from "zod";
  * variable is missing, instead of failing silently deep inside a feature.
  */
 
+export function isProduction(): boolean {
+  return process.env.NODE_ENV === "production";
+}
+
 const serverEnvSchema = z.object({
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(), // optional until wired up
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1).optional(),
   RAZORPAY_KEY_ID: z.string().optional(),
   RAZORPAY_KEY_SECRET: z.string().optional(),
   RAZORPAY_WEBHOOK_SECRET: z.string().optional(),
@@ -39,4 +43,26 @@ export function getServerEnv() {
     SHIPROCKET_EMAIL: process.env.SHIPROCKET_EMAIL,
     SHIPROCKET_PASSWORD: process.env.SHIPROCKET_PASSWORD,
   });
+}
+
+/**
+ * Startup validation for production environments (§3).
+ * Throws a clear error if load-bearing production keys are missing when running in production.
+ */
+export function validateProductionEnv() {
+  if (!isProduction()) return;
+
+  const required = [
+    "SUPABASE_SERVICE_ROLE_KEY",
+    "RAZORPAY_KEY_ID",
+    "RAZORPAY_KEY_SECRET",
+    "RAZORPAY_WEBHOOK_SECRET",
+  ] as const;
+
+  const missing = required.filter((key) => !process.env[key]);
+  if (missing.length > 0) {
+    throw new Error(
+      `[FATAL STARTUP ERROR] Missing required production environment variables: ${missing.join(", ")}`
+    );
+  }
 }

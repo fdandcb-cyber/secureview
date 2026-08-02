@@ -1,6 +1,7 @@
 import "server-only";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isProduction } from "@/config/env";
 
 export type AdminUserRole = "admin" | "editor";
 
@@ -17,7 +18,7 @@ export type AdminSessionInfo = {
  */
 export async function requireAdmin(): Promise<AdminSessionInfo> {
   // WARNING: DEV_BYPASS_ADMIN_AUTH is strictly disabled in production builds!
-  if (process.env.NODE_ENV !== "production" && process.env.DEV_BYPASS_ADMIN_AUTH === "true") {
+  if (!isProduction() && process.env.DEV_BYPASS_ADMIN_AUTH === "true") {
     console.warn(
       "WARNING: DEV_BYPASS_ADMIN_AUTH is enabled. Bypassing Supabase admin authentication guard for local offline development. This must NEVER be set in any deployed environment!"
     );

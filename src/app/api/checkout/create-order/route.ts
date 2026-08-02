@@ -115,13 +115,20 @@ export async function POST(request: Request) {
       message: "Order created successfully with server-verified DB prices.",
     });
   } catch (err) {
-    console.error("DEBUG ORDER CREATION ERROR:", err);
+    if (err instanceof z.ZodError) {
+      return NextResponse.json(
+        { success: false, error: "Invalid request.", issues: err.issues },
+        { status: 400 }
+      );
+    }
+
+    console.error("[checkout/create-order] Order creation failed:", err);
     return NextResponse.json(
       {
         success: false,
-        error: err instanceof Error ? err.message : String(err),
+        error: "We couldn't process your order right now. Please try again in a moment.",
       },
-      { status: 400 }
+      { status: 502 }
     );
   }
 }

@@ -127,11 +127,9 @@ export async function POST(request: Request) {
       eventId,
     });
   } catch (err) {
+    console.error("[checkout/webhook] Processing failed:", err);
     return NextResponse.json(
-      {
-        success: false,
-        error: err instanceof Error ? err.message : "Webhook processing failed",
-      },
+      { success: false, error: "Webhook processing failed." },
       { status: 500 }
     );
   }

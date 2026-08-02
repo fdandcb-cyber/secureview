@@ -186,11 +186,28 @@ export async function createOrderServerSide(input: {
 
       return OrderSchema.parse(fullOrder);
     }
-  } catch {
-    // Database insert fallback for offline/development environments
+
+    // The insert call completed without throwing, but Supabase reported an
+    // error or returned no row — this is a genuine persistence failure, not
+    // an "offline dev" case. Never silently fabricate a success in production.
+    if (process.env.NODE_ENV === "production") {
+      throw new Error(
+        `Order persistence failed: ${orderError?.message ?? "no row returned from insert"}`
+      );
+    }
+  } catch (err) {
+    if (process.env.NODE_ENV === "production") {
+      // Re-throw in production — the caller (checkout route) must not treat
+      // this as a successful order creation. Falling through to the demo
+      // fallback below would silently report success for an order that was
+      // never persisted anywhere.
+      throw err;
+    }
+    // Non-production: fall through to the in-memory demo fallback below.
   }
 
-  // Development/demo fallback object
+  // Development/demo fallback object — only reachable in non-production
+  // environments, since both failure paths above re-throw in production.
   const orderId = `ord-${Date.now()}`;
   const newOrder: Order = {
     id: orderId,
@@ -215,9 +232,10 @@ export async function createOrderServerSide(input: {
     })),
   };
 
-  if (process.env.NODE_ENV !== "production") {
-    memoryOrders[orderId] = newOrder;
-  }
+  // Reachable only in non-production: both failure paths above throw when
+  // NODE_ENV === "production", so this demo fallback is guaranteed to be
+  // non-production code at this point.
+  memoryOrders[orderId] = newOrder;
 
   return newOrder;
 }
